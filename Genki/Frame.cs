@@ -165,5 +165,11 @@ namespace Genki
 		{
 
 		}
+
+		private void mi_about_Click(object sender, EventArgs e)
+		{
+			AboutDialogBox about = new AboutDialogBox();
+			about.ShowDialog(this);
+		}
 	}
 }

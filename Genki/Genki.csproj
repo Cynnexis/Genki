@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutDialogBox.Designer.cs">
+      <DependentUpon>AboutDialogBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Frame.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -59,6 +65,9 @@
     <Compile Include="SudokuEngine\Game.cs" />
     <Compile Include="SudokuEngine\GridEngine\Grid.cs" />
     <Compile Include="SudokuEngine\GridEngine\GridListener.cs" />
+    <EmbeddedResource Include="AboutDialogBox.resx">
+      <DependentUpon>AboutDialogBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Frame.resx">
       <DependentUpon>Frame.cs</DependentUpon>
     </EmbeddedResource>
