@@ -28,6 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.menu = new System.Windows.Forms.MenuStrip();
 			this.mi_file = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_newGame = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,10 +48,11 @@
 			this.status = new System.Windows.Forms.StatusStrip();
 			this.l_status = new System.Windows.Forms.ToolStripStatusLabel();
 			this.p_body = new System.Windows.Forms.Panel();
-			this.p_timer = new System.Windows.Forms.Panel();
-			this.b_timerControl = new System.Windows.Forms.Button();
-			this.tb_timer = new System.Windows.Forms.TextBox();
-			this.l_timer = new System.Windows.Forms.Label();
+			this.dvg_grid = new System.Windows.Forms.DataGridView();
+			this.p_stopwatch = new System.Windows.Forms.Panel();
+			this.b_stopwatchControl = new System.Windows.Forms.Button();
+			this.tb_stopwatch = new System.Windows.Forms.TextBox();
+			this.l_stopwatch = new System.Windows.Forms.Label();
 			this.p_control = new System.Windows.Forms.Panel();
 			this.gb_cellOption = new System.Windows.Forms.GroupBox();
 			this.b_editDraft = new System.Windows.Forms.Button();
@@ -57,16 +62,15 @@
 			this.l_cellDraft = new System.Windows.Forms.Label();
 			this.n_cellValue = new System.Windows.Forms.NumericUpDown();
 			this.l_cellValue = new System.Windows.Forms.Label();
-			this.dvg_grid = new System.Windows.Forms.DataGridView();
 			this.menu.SuspendLayout();
 			this.p_header.SuspendLayout();
 			this.status.SuspendLayout();
 			this.p_body.SuspendLayout();
-			this.p_timer.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dvg_grid)).BeginInit();
+			this.p_stopwatch.SuspendLayout();
 			this.p_control.SuspendLayout();
 			this.gb_cellOption.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.n_cellValue)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.dvg_grid)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// menu
@@ -198,7 +202,7 @@
 			// p_body
 			// 
 			this.p_body.Controls.Add(this.dvg_grid);
-			this.p_body.Controls.Add(this.p_timer);
+			this.p_body.Controls.Add(this.p_stopwatch);
 			this.p_body.Controls.Add(this.p_control);
 			this.p_body.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.p_body.Location = new System.Drawing.Point(0, 124);
@@ -206,45 +210,111 @@
 			this.p_body.Size = new System.Drawing.Size(747, 352);
 			this.p_body.TabIndex = 3;
 			// 
-			// p_timer
+			// dvg_grid
 			// 
-			this.p_timer.Controls.Add(this.b_timerControl);
-			this.p_timer.Controls.Add(this.tb_timer);
-			this.p_timer.Controls.Add(this.l_timer);
-			this.p_timer.Dock = System.Windows.Forms.DockStyle.Top;
-			this.p_timer.Location = new System.Drawing.Point(0, 0);
-			this.p_timer.Name = "p_timer";
-			this.p_timer.Size = new System.Drawing.Size(592, 70);
-			this.p_timer.TabIndex = 2;
+			this.dvg_grid.AccessibleDescription = this.dvg_grid.AccessibleName;
+			this.dvg_grid.AccessibleName = "Sudoku Grid";
+			this.dvg_grid.AccessibleRole = System.Windows.Forms.AccessibleRole.Table;
+			this.dvg_grid.AllowUserToAddRows = false;
+			this.dvg_grid.AllowUserToDeleteRows = false;
+			this.dvg_grid.AllowUserToResizeColumns = false;
+			this.dvg_grid.AllowUserToResizeRows = false;
+			dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle17.NullValue = "0";
+			this.dvg_grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle17;
+			this.dvg_grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+			this.dvg_grid.BackgroundColor = System.Drawing.Color.IndianRed;
+			dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle18.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle18.NullValue = "0";
+			dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dvg_grid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle18;
+			this.dvg_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+			this.dvg_grid.ColumnHeadersVisible = false;
+			dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle19.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle19.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle19.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle19.NullValue = "0";
+			dataGridViewCellStyle19.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle19.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dvg_grid.DefaultCellStyle = dataGridViewCellStyle19;
+			this.dvg_grid.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dvg_grid.EnableHeadersVisualStyles = false;
+			this.dvg_grid.Location = new System.Drawing.Point(0, 70);
+			this.dvg_grid.MultiSelect = false;
+			this.dvg_grid.Name = "dvg_grid";
+			dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle20.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle20.NullValue = "0";
+			dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dvg_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle20;
+			this.dvg_grid.RowHeadersVisible = false;
+			this.dvg_grid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+			this.dvg_grid.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.dvg_grid.RowTemplate.DefaultCellStyle.NullValue = "0";
+			this.dvg_grid.RowTemplate.Height = 24;
+			this.dvg_grid.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.dvg_grid.ScrollBars = System.Windows.Forms.ScrollBars.None;
+			this.dvg_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+			this.dvg_grid.ShowCellErrors = false;
+			this.dvg_grid.ShowEditingIcon = false;
+			this.dvg_grid.ShowRowErrors = false;
+			this.dvg_grid.Size = new System.Drawing.Size(592, 282);
+			this.dvg_grid.TabIndex = 0;
+			this.dvg_grid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvg_grid_CellValueChanged);
+			this.dvg_grid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvg_grid_CellEnter);
+			this.dvg_grid.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvg_grid_CellLeave);
+			this.dvg_grid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvg_grid_CellValueChanged);
 			// 
-			// b_timerControl
+			// p_stopwatch
 			// 
-			this.b_timerControl.Location = new System.Drawing.Point(354, 21);
-			this.b_timerControl.Name = "b_timerControl";
-			this.b_timerControl.Size = new System.Drawing.Size(75, 23);
-			this.b_timerControl.TabIndex = 2;
-			this.b_timerControl.Text = "❚❚\r\n►";
-			this.b_timerControl.UseVisualStyleBackColor = true;
+			this.p_stopwatch.Controls.Add(this.b_stopwatchControl);
+			this.p_stopwatch.Controls.Add(this.tb_stopwatch);
+			this.p_stopwatch.Controls.Add(this.l_stopwatch);
+			this.p_stopwatch.Dock = System.Windows.Forms.DockStyle.Top;
+			this.p_stopwatch.Location = new System.Drawing.Point(0, 0);
+			this.p_stopwatch.Name = "p_stopwatch";
+			this.p_stopwatch.Size = new System.Drawing.Size(592, 70);
+			this.p_stopwatch.TabIndex = 2;
 			// 
-			// tb_timer
+			// b_stopwatchControl
 			// 
-			this.tb_timer.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.tb_timer.Location = new System.Drawing.Point(247, 23);
-			this.tb_timer.Name = "tb_timer";
-			this.tb_timer.Size = new System.Drawing.Size(100, 22);
-			this.tb_timer.TabIndex = 1;
+			this.b_stopwatchControl.Location = new System.Drawing.Point(354, 21);
+			this.b_stopwatchControl.Name = "b_stopwatchControl";
+			this.b_stopwatchControl.Size = new System.Drawing.Size(75, 23);
+			this.b_stopwatchControl.TabIndex = 2;
+			this.b_stopwatchControl.Text = "❚❚\r\n►";
+			this.b_stopwatchControl.UseVisualStyleBackColor = true;
 			// 
-			// l_timer
+			// tb_stopwatch
 			// 
-			this.l_timer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.tb_stopwatch.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.tb_stopwatch.Location = new System.Drawing.Point(247, 23);
+			this.tb_stopwatch.Name = "tb_stopwatch";
+			this.tb_stopwatch.Size = new System.Drawing.Size(100, 22);
+			this.tb_stopwatch.TabIndex = 1;
+			// 
+			// l_stopwatch
+			// 
+			this.l_stopwatch.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.l_timer.AutoSize = true;
-			this.l_timer.Location = new System.Drawing.Point(275, 4);
-			this.l_timer.Name = "l_timer";
-			this.l_timer.Size = new System.Drawing.Size(44, 17);
-			this.l_timer.TabIndex = 0;
-			this.l_timer.Text = "Timer";
+			this.l_stopwatch.AutoSize = true;
+			this.l_stopwatch.Location = new System.Drawing.Point(275, 4);
+			this.l_stopwatch.Name = "l_stopwatch";
+			this.l_stopwatch.Size = new System.Drawing.Size(44, 17);
+			this.l_stopwatch.TabIndex = 0;
+			this.l_stopwatch.Text = "Timer";
 			// 
 			// p_control
 			// 
@@ -258,9 +328,6 @@
 			// 
 			// gb_cellOption
 			// 
-			this.gb_cellOption.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.gb_cellOption.Controls.Add(this.b_editDraft);
 			this.gb_cellOption.Controls.Add(this.b_removeDraft);
 			this.gb_cellOption.Controls.Add(this.b_addDraft);
@@ -268,9 +335,10 @@
 			this.gb_cellOption.Controls.Add(this.l_cellDraft);
 			this.gb_cellOption.Controls.Add(this.n_cellValue);
 			this.gb_cellOption.Controls.Add(this.l_cellValue);
-			this.gb_cellOption.Location = new System.Drawing.Point(4, 4);
+			this.gb_cellOption.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.gb_cellOption.Location = new System.Drawing.Point(0, 0);
 			this.gb_cellOption.Name = "gb_cellOption";
-			this.gb_cellOption.Size = new System.Drawing.Size(0, 387);
+			this.gb_cellOption.Size = new System.Drawing.Size(155, 352);
 			this.gb_cellOption.TabIndex = 0;
 			this.gb_cellOption.TabStop = false;
 			this.gb_cellOption.Text = "Selected Cell";
@@ -278,32 +346,35 @@
 			// b_editDraft
 			// 
 			this.b_editDraft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.b_editDraft.Location = new System.Drawing.Point(10, 287);
+			this.b_editDraft.Location = new System.Drawing.Point(10, 269);
 			this.b_editDraft.Name = "b_editDraft";
-			this.b_editDraft.Size = new System.Drawing.Size(132, 23);
+			this.b_editDraft.Size = new System.Drawing.Size(133, 23);
 			this.b_editDraft.TabIndex = 6;
 			this.b_editDraft.Text = "Edit";
 			this.b_editDraft.UseVisualStyleBackColor = true;
+			this.b_editDraft.Click += new System.EventHandler(this.b_editDraft_Click);
 			// 
 			// b_removeDraft
 			// 
 			this.b_removeDraft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.b_removeDraft.Location = new System.Drawing.Point(72, 316);
+			this.b_removeDraft.Location = new System.Drawing.Point(72, 298);
 			this.b_removeDraft.Name = "b_removeDraft";
-			this.b_removeDraft.Size = new System.Drawing.Size(70, 23);
+			this.b_removeDraft.Size = new System.Drawing.Size(71, 23);
 			this.b_removeDraft.TabIndex = 5;
 			this.b_removeDraft.Text = "Remove";
 			this.b_removeDraft.UseVisualStyleBackColor = true;
+			this.b_removeDraft.Click += new System.EventHandler(this.b_removeDraft_Click);
 			// 
 			// b_addDraft
 			// 
 			this.b_addDraft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.b_addDraft.Location = new System.Drawing.Point(7, 316);
+			this.b_addDraft.Location = new System.Drawing.Point(7, 298);
 			this.b_addDraft.Name = "b_addDraft";
-			this.b_addDraft.Size = new System.Drawing.Size(59, 23);
+			this.b_addDraft.Size = new System.Drawing.Size(66, 23);
 			this.b_addDraft.TabIndex = 4;
 			this.b_addDraft.Text = "Add";
 			this.b_addDraft.UseVisualStyleBackColor = true;
+			this.b_addDraft.Click += new System.EventHandler(this.b_addDraft_Click);
 			// 
 			// lb_draft
 			// 
@@ -314,7 +385,7 @@
 			this.lb_draft.ItemHeight = 16;
 			this.lb_draft.Location = new System.Drawing.Point(7, 93);
 			this.lb_draft.Name = "lb_draft";
-			this.lb_draft.Size = new System.Drawing.Size(135, 180);
+			this.lb_draft.Size = new System.Drawing.Size(136, 164);
 			this.lb_draft.TabIndex = 3;
 			// 
 			// l_cellDraft
@@ -341,8 +412,9 @@
             0,
             0});
 			this.n_cellValue.Name = "n_cellValue";
-			this.n_cellValue.Size = new System.Drawing.Size(132, 22);
+			this.n_cellValue.Size = new System.Drawing.Size(136, 22);
 			this.n_cellValue.TabIndex = 1;
+			this.n_cellValue.ValueChanged += new System.EventHandler(this.n_cellValue_ValueChanged);
 			// 
 			// l_cellValue
 			// 
@@ -356,19 +428,10 @@
 			this.l_cellValue.TabIndex = 0;
 			this.l_cellValue.Text = "Value";
 			// 
-			// dvg_grid
-			// 
-			this.dvg_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-			this.dvg_grid.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dvg_grid.Location = new System.Drawing.Point(0, 70);
-			this.dvg_grid.Name = "dvg_grid";
-			this.dvg_grid.RowTemplate.Height = 24;
-			this.dvg_grid.Size = new System.Drawing.Size(592, 282);
-			this.dvg_grid.TabIndex = 0;
-			this.dvg_grid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvg_grid_CellContentClick);
-			// 
 			// Frame
 			// 
+			this.AccessibleName = "Main Window";
+			this.AccessibleRole = System.Windows.Forms.AccessibleRole.Window;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(747, 501);
@@ -377,8 +440,10 @@
 			this.Controls.Add(this.p_header);
 			this.Controls.Add(this.menu);
 			this.MainMenuStrip = this.menu;
+			this.MinimumSize = new System.Drawing.Size(640, 480);
 			this.Name = "Frame";
 			this.Text = "Genki";
+			this.Resize += new System.EventHandler(this.frame_Resize);
 			this.menu.ResumeLayout(false);
 			this.menu.PerformLayout();
 			this.p_header.ResumeLayout(false);
@@ -386,13 +451,13 @@
 			this.status.ResumeLayout(false);
 			this.status.PerformLayout();
 			this.p_body.ResumeLayout(false);
-			this.p_timer.ResumeLayout(false);
-			this.p_timer.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dvg_grid)).EndInit();
+			this.p_stopwatch.ResumeLayout(false);
+			this.p_stopwatch.PerformLayout();
 			this.p_control.ResumeLayout(false);
 			this.gb_cellOption.ResumeLayout(false);
 			this.gb_cellOption.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.n_cellValue)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.dvg_grid)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -416,7 +481,7 @@
 		private System.Windows.Forms.StatusStrip status;
 		private System.Windows.Forms.ToolStripStatusLabel l_status;
 		private System.Windows.Forms.Panel p_body;
-		private System.Windows.Forms.Panel p_timer;
+		private System.Windows.Forms.Panel p_stopwatch;
 		private System.Windows.Forms.Panel p_control;
 		private System.Windows.Forms.DataGridView dvg_grid;
 		private System.Windows.Forms.GroupBox gb_cellOption;
@@ -427,9 +492,9 @@
 		private System.Windows.Forms.ListBox lb_draft;
 		private System.Windows.Forms.Label l_cellDraft;
 		private System.Windows.Forms.Button b_editDraft;
-		private System.Windows.Forms.Label l_timer;
-		private System.Windows.Forms.TextBox tb_timer;
-		private System.Windows.Forms.Button b_timerControl;
+		private System.Windows.Forms.Label l_stopwatch;
+		private System.Windows.Forms.TextBox tb_stopwatch;
+		private System.Windows.Forms.Button b_stopwatchControl;
 	}
 }
 
