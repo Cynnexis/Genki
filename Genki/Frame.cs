@@ -122,8 +122,11 @@ namespace Genki
 
 		private void dvg_grid_CellLeave(object sender, DataGridViewCellEventArgs e)
 		{
-			activeCell = new Point(-1, -1);
-			gb_cellOption.Visible = true;
+			if (dvg_grid.SelectedCells == null || dvg_grid.SelectedCells.Count == 0)
+			{
+				activeCell = new Point(-1, -1);
+				gb_cellOption.Visible = false;
+			}
 		}
 
 		private void n_cellValue_ValueChanged(object sender, EventArgs e)
@@ -144,26 +147,65 @@ namespace Genki
 				}
 				catch (OverflowException ex)
 				{
-					System.Console.Error.WriteLine("Handled Error:");
 					System.Console.Error.WriteLine(ex.StackTrace);
 					n_cellValue.Value = grid[activeCell.X, activeCell.Y].Value;
 				}
 			}
 		}
 
+		private void lb_draft_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			System.Console.WriteLine(sender + "\n" + e);
+		}
+
 		private void b_editDraft_Click(object sender, EventArgs e)
 		{
-
+			if (lb_draft.SelectedIndex != -1 && activeCell.X != -1 && activeCell.Y != -1)
+			{
+				try
+				{
+					char result = Microsoft.VisualBasic.Interaction.InputBox("Enter the new value:", "Edit Draft: " + lb_draft.SelectedItem.ToString(), grid[activeCell.X, activeCell.Y].Value.ToString())[0];
+					if (char.IsNumber(result) && result >= '0' && result <= '9')
+					{
+						byte value = Convert.ToByte(result - '0');
+						grid[activeCell.X, activeCell.Y].Draft[lb_draft.SelectedIndex] = value;
+						lb_draft.Items[lb_draft.SelectedIndex] = value;
+					}
+					else
+						MessageBox.Show("Invalid format.", "Error", MessageBoxButtons.OK);
+				} catch (IndexOutOfRangeException ex)
+				{
+					System.Console.Error.WriteLine(ex.StackTrace);
+				}
+			}
 		}
 
 		private void b_addDraft_Click(object sender, EventArgs e)
 		{
-
+			if (activeCell.X != -1 && activeCell.Y != -1)
+			{
+				char result = Microsoft.VisualBasic.Interaction.InputBox("Enter a value:", "Add Draft", "0")[0];
+				if (char.IsNumber(result) && result >= '0' && result <= '9')
+				{
+					byte value = Convert.ToByte(result - '0');
+					grid[activeCell.X, activeCell.Y].Draft.Add(value);
+					lb_draft.Items.Add(value);
+				}
+				else
+					MessageBox.Show("Invalid format.", "Error", MessageBoxButtons.OK);
+			}
 		}
 
 		private void b_removeDraft_Click(object sender, EventArgs e)
 		{
-
+			if (lb_draft.SelectedIndex != -1 && activeCell.X != -1 && activeCell.Y != -1)
+			{
+				if (MessageBox.Show("Are you sure you want to delete the draft " + lb_draft.SelectedItem.ToString() + " of the cell (" + (activeCell.X + 1) + " ; " + (activeCell.Y + 1) + ")?", "Delete draft " + lb_draft.SelectedItem.ToString(), MessageBoxButtons.YesNo) == DialogResult.Yes)
+				{
+					grid[activeCell.X, activeCell.Y].Draft.RemoveAt(lb_draft.SelectedIndex);
+					lb_draft.Items.RemoveAt(lb_draft.SelectedIndex);
+				}
+			}
 		}
 
 		private void mi_about_Click(object sender, EventArgs e)
