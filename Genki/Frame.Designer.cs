@@ -28,6 +28,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frame));
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -35,18 +37,37 @@
 			this.menu = new System.Windows.Forms.MenuStrip();
 			this.mi_file = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_newGame = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.mi_open = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_openRecently = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_save = new System.Windows.Forms.ToolStripMenuItem();
-			this.mi_load = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_saveAs = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.mi_exit = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_edit = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_undo = new System.Windows.Forms.ToolStripMenuItem();
+			this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_window = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_displayHeader = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_debug = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_breakNow = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_printGrid = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_printVirtualGrid = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_printPhysicalGrid = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_forceCopyDebug = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_magicDebug = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_solveSudokuDebug = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_help = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_helpMe = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.mi_about = new System.Windows.Forms.ToolStripMenuItem();
 			this.p_header = new System.Windows.Forms.Panel();
 			this.l_titleEnglish = new System.Windows.Forms.Label();
-			this.l_titlerHirigana = new System.Windows.Forms.Label();
+			this.l_titleHirigana = new System.Windows.Forms.Label();
 			this.l_titleKanji = new System.Windows.Forms.Label();
 			this.status = new System.Windows.Forms.StatusStrip();
 			this.l_status = new System.Windows.Forms.ToolStripStatusLabel();
+			this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
 			this.p_body = new System.Windows.Forms.Panel();
 			this.dvg_grid = new System.Windows.Forms.DataGridView();
 			this.p_stopwatch = new System.Windows.Forms.Panel();
@@ -55,13 +76,17 @@
 			this.l_stopwatch = new System.Windows.Forms.Label();
 			this.p_control = new System.Windows.Forms.Panel();
 			this.gb_cellOption = new System.Windows.Forms.GroupBox();
+			this.panel2 = new System.Windows.Forms.Panel();
+			this.l_cellDraft = new System.Windows.Forms.Label();
+			this.lb_draft = new System.Windows.Forms.ListBox();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.l_cellValue = new System.Windows.Forms.Label();
+			this.n_cellValue = new System.Windows.Forms.NumericUpDown();
+			this.p_controlButtons = new System.Windows.Forms.Panel();
+			this.b_addDraft = new System.Windows.Forms.Button();
 			this.b_editDraft = new System.Windows.Forms.Button();
 			this.b_removeDraft = new System.Windows.Forms.Button();
-			this.b_addDraft = new System.Windows.Forms.Button();
-			this.lb_draft = new System.Windows.Forms.ListBox();
-			this.l_cellDraft = new System.Windows.Forms.Label();
-			this.n_cellValue = new System.Windows.Forms.NumericUpDown();
-			this.l_cellValue = new System.Windows.Forms.Label();
+			this.tp_pronunciation = new System.Windows.Forms.ToolTip(this.components);
 			this.menu.SuspendLayout();
 			this.p_header.SuspendLayout();
 			this.status.SuspendLayout();
@@ -70,7 +95,10 @@
 			this.p_stopwatch.SuspendLayout();
 			this.p_control.SuspendLayout();
 			this.gb_cellOption.SuspendLayout();
+			this.panel2.SuspendLayout();
+			this.panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.n_cellValue)).BeginInit();
+			this.p_controlButtons.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menu
@@ -79,6 +107,8 @@
 			this.menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mi_file,
             this.mi_edit,
+            this.mi_window,
+            this.mi_debug,
             this.mi_help});
 			this.menu.Location = new System.Drawing.Point(0, 0);
 			this.menu.Name = "menu";
@@ -90,56 +120,208 @@
 			// 
 			this.mi_file.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mi_newGame,
+            this.toolStripSeparator1,
+            this.mi_open,
+            this.mi_openRecently,
             this.mi_save,
-            this.mi_load,
+            this.mi_saveAs,
+            this.toolStripSeparator2,
             this.mi_exit});
 			this.mi_file.Name = "mi_file";
 			this.mi_file.Size = new System.Drawing.Size(58, 24);
-			this.mi_file.Text = "Genki";
+			this.mi_file.Text = "&Genki";
 			// 
 			// mi_newGame
 			// 
 			this.mi_newGame.Name = "mi_newGame";
-			this.mi_newGame.Size = new System.Drawing.Size(157, 26);
-			this.mi_newGame.Text = "New Game";
+			this.mi_newGame.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+			this.mi_newGame.Size = new System.Drawing.Size(227, 26);
+			this.mi_newGame.Text = "&New Game";
+			this.mi_newGame.Click += new System.EventHandler(this.mi_newGame_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(224, 6);
+			// 
+			// mi_open
+			// 
+			this.mi_open.Name = "mi_open";
+			this.mi_open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+			this.mi_open.Size = new System.Drawing.Size(227, 26);
+			this.mi_open.Text = "&Open";
+			this.mi_open.Click += new System.EventHandler(this.mi_open_Click);
+			// 
+			// mi_openRecently
+			// 
+			this.mi_openRecently.Name = "mi_openRecently";
+			this.mi_openRecently.Size = new System.Drawing.Size(227, 26);
+			this.mi_openRecently.Text = "Open recently...";
 			// 
 			// mi_save
 			// 
 			this.mi_save.Name = "mi_save";
-			this.mi_save.Size = new System.Drawing.Size(157, 26);
-			this.mi_save.Text = "Save";
+			this.mi_save.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+			this.mi_save.Size = new System.Drawing.Size(227, 26);
+			this.mi_save.Text = "&Save";
+			this.mi_save.Click += new System.EventHandler(this.mi_save_Click);
 			// 
-			// mi_load
+			// mi_saveAs
 			// 
-			this.mi_load.Name = "mi_load";
-			this.mi_load.Size = new System.Drawing.Size(157, 26);
-			this.mi_load.Text = "Load";
+			this.mi_saveAs.Name = "mi_saveAs";
+			this.mi_saveAs.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+			this.mi_saveAs.Size = new System.Drawing.Size(227, 26);
+			this.mi_saveAs.Text = "Save as...";
+			// 
+			// toolStripSeparator2
+			// 
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.Size = new System.Drawing.Size(224, 6);
 			// 
 			// mi_exit
 			// 
 			this.mi_exit.Name = "mi_exit";
-			this.mi_exit.Size = new System.Drawing.Size(157, 26);
+			this.mi_exit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
+			this.mi_exit.Size = new System.Drawing.Size(227, 26);
 			this.mi_exit.Text = "Exit";
+			this.mi_exit.Click += new System.EventHandler(this.mi_exit_Click);
 			// 
 			// mi_edit
 			// 
+			this.mi_edit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mi_undo,
+            this.redoToolStripMenuItem});
 			this.mi_edit.Name = "mi_edit";
 			this.mi_edit.Size = new System.Drawing.Size(47, 24);
-			this.mi_edit.Text = "Edit";
+			this.mi_edit.Text = "&Edit";
+			// 
+			// mi_undo
+			// 
+			this.mi_undo.Name = "mi_undo";
+			this.mi_undo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+			this.mi_undo.Size = new System.Drawing.Size(181, 26);
+			this.mi_undo.Text = "Undo";
+			// 
+			// redoToolStripMenuItem
+			// 
+			this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+			this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
+			this.redoToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+			this.redoToolStripMenuItem.Text = "Redo";
+			// 
+			// mi_window
+			// 
+			this.mi_window.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mi_displayHeader});
+			this.mi_window.Name = "mi_window";
+			this.mi_window.Size = new System.Drawing.Size(76, 24);
+			this.mi_window.Text = "&Window";
+			// 
+			// mi_displayHeader
+			// 
+			this.mi_displayHeader.Checked = true;
+			this.mi_displayHeader.CheckOnClick = true;
+			this.mi_displayHeader.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.mi_displayHeader.Name = "mi_displayHeader";
+			this.mi_displayHeader.Size = new System.Drawing.Size(186, 26);
+			this.mi_displayHeader.Text = "Display Header";
+			this.mi_displayHeader.CheckedChanged += new System.EventHandler(this.mi_displayHeader_CheckedChanged);
+			// 
+			// mi_debug
+			// 
+			this.mi_debug.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mi_breakNow,
+            this.mi_printGrid,
+            this.mi_forceCopyDebug,
+            this.mi_magicDebug,
+            this.mi_solveSudokuDebug});
+			this.mi_debug.Name = "mi_debug";
+			this.mi_debug.Size = new System.Drawing.Size(66, 24);
+			this.mi_debug.Text = "&Debug";
+			// 
+			// mi_breakNow
+			// 
+			this.mi_breakNow.Name = "mi_breakNow";
+			this.mi_breakNow.Size = new System.Drawing.Size(280, 26);
+			this.mi_breakNow.Text = "Break Now";
+			this.mi_breakNow.Click += new System.EventHandler(this.mi_breakNow_Click);
+			// 
+			// mi_printGrid
+			// 
+			this.mi_printGrid.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mi_printVirtualGrid,
+            this.mi_printPhysicalGrid});
+			this.mi_printGrid.Name = "mi_printGrid";
+			this.mi_printGrid.Size = new System.Drawing.Size(280, 26);
+			this.mi_printGrid.Text = "Print Grid";
+			// 
+			// mi_printVirtualGrid
+			// 
+			this.mi_printVirtualGrid.Name = "mi_printVirtualGrid";
+			this.mi_printVirtualGrid.Size = new System.Drawing.Size(202, 26);
+			this.mi_printVirtualGrid.Text = "Print Virtual Grid";
+			this.mi_printVirtualGrid.Click += new System.EventHandler(this.mi_printVirtualGrid_Click);
+			// 
+			// mi_printPhysicalGrid
+			// 
+			this.mi_printPhysicalGrid.Name = "mi_printPhysicalGrid";
+			this.mi_printPhysicalGrid.Size = new System.Drawing.Size(202, 26);
+			this.mi_printPhysicalGrid.Text = "Print Physical Grid";
+			this.mi_printPhysicalGrid.Click += new System.EventHandler(this.mi_printPhysicalGrid_Click);
+			// 
+			// mi_forceCopyDebug
+			// 
+			this.mi_forceCopyDebug.Name = "mi_forceCopyDebug";
+			this.mi_forceCopyDebug.Size = new System.Drawing.Size(280, 26);
+			this.mi_forceCopyDebug.Text = "Force DVG <- grid";
+			this.mi_forceCopyDebug.ToolTipText = "Force the copy of the virtual grid into the DataGridView display below";
+			this.mi_forceCopyDebug.Click += new System.EventHandler(this.mi_forceCopyDebug_Click);
+			// 
+			// mi_magicDebug
+			// 
+			this.mi_magicDebug.Name = "mi_magicDebug";
+			this.mi_magicDebug.Size = new System.Drawing.Size(280, 26);
+			this.mi_magicDebug.Text = "The Magic Debugging Button";
+			this.mi_magicDebug.ToolTipText = resources.GetString("mi_magicDebug.ToolTipText");
+			this.mi_magicDebug.Click += new System.EventHandler(this.mi_magicDebug_Click);
+			// 
+			// mi_solveSudokuDebug
+			// 
+			this.mi_solveSudokuDebug.Name = "mi_solveSudokuDebug";
+			this.mi_solveSudokuDebug.Size = new System.Drawing.Size(280, 26);
+			this.mi_solveSudokuDebug.Text = "Solve It";
+			this.mi_solveSudokuDebug.ToolTipText = "Solve the soduku for you.\r\nWhy would you waste your time when a computer can do i" +
+    "t?";
+			this.mi_solveSudokuDebug.Click += new System.EventHandler(this.mi_solveSudokuDebug_Click);
 			// 
 			// mi_help
 			// 
 			this.mi_help.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mi_helpMe,
+            this.toolStripSeparator3,
             this.mi_about});
 			this.mi_help.Name = "mi_help";
 			this.mi_help.Size = new System.Drawing.Size(53, 24);
-			this.mi_help.Text = "Help";
+			this.mi_help.Text = "&Help";
+			// 
+			// mi_helpMe
+			// 
+			this.mi_helpMe.Name = "mi_helpMe";
+			this.mi_helpMe.Size = new System.Drawing.Size(257, 26);
+			this.mi_helpMe.Text = "Help me to solve the grid!";
+			this.mi_helpMe.Click += new System.EventHandler(this.mi_helpMe_Click);
+			// 
+			// toolStripSeparator3
+			// 
+			this.toolStripSeparator3.Name = "toolStripSeparator3";
+			this.toolStripSeparator3.Size = new System.Drawing.Size(254, 6);
 			// 
 			// mi_about
 			// 
 			this.mi_about.Name = "mi_about";
-			this.mi_about.Size = new System.Drawing.Size(166, 26);
-			this.mi_about.Text = "About Genki";
+			this.mi_about.Size = new System.Drawing.Size(257, 26);
+			this.mi_about.Text = "&About Genki";
 			this.mi_about.Click += new System.EventHandler(this.mi_about_Click);
 			// 
 			// p_header
@@ -147,7 +329,7 @@
 			this.p_header.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.p_header.BackColor = System.Drawing.Color.DarkSalmon;
 			this.p_header.Controls.Add(this.l_titleEnglish);
-			this.p_header.Controls.Add(this.l_titlerHirigana);
+			this.p_header.Controls.Add(this.l_titleHirigana);
 			this.p_header.Controls.Add(this.l_titleKanji);
 			this.p_header.Dock = System.Windows.Forms.DockStyle.Top;
 			this.p_header.Location = new System.Drawing.Point(0, 28);
@@ -163,15 +345,17 @@
 			this.l_titleEnglish.Size = new System.Drawing.Size(45, 17);
 			this.l_titleEnglish.TabIndex = 2;
 			this.l_titleEnglish.Text = "Genki";
+			this.tp_pronunciation.SetToolTip(this.l_titleEnglish, "元気");
 			// 
-			// l_titlerHirigana
+			// l_titleHirigana
 			// 
-			this.l_titlerHirigana.AutoSize = true;
-			this.l_titlerHirigana.Location = new System.Drawing.Point(355, 14);
-			this.l_titlerHirigana.Name = "l_titlerHirigana";
-			this.l_titlerHirigana.Size = new System.Drawing.Size(42, 17);
-			this.l_titlerHirigana.TabIndex = 1;
-			this.l_titlerHirigana.Text = "げんき";
+			this.l_titleHirigana.AutoSize = true;
+			this.l_titleHirigana.Location = new System.Drawing.Point(355, 14);
+			this.l_titleHirigana.Name = "l_titleHirigana";
+			this.l_titleHirigana.Size = new System.Drawing.Size(42, 17);
+			this.l_titleHirigana.TabIndex = 1;
+			this.l_titleHirigana.Text = "げんき";
+			this.tp_pronunciation.SetToolTip(this.l_titleHirigana, "ge-n-ki");
 			// 
 			// l_titleKanji
 			// 
@@ -183,12 +367,14 @@
 			this.l_titleKanji.Size = new System.Drawing.Size(73, 32);
 			this.l_titleKanji.TabIndex = 0;
 			this.l_titleKanji.Text = "元気";
+			this.tp_pronunciation.SetToolTip(this.l_titleKanji, "gen-ki");
 			// 
 			// status
 			// 
 			this.status.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.status.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.l_status});
+            this.l_status,
+            this.progressBar});
 			this.status.Location = new System.Drawing.Point(0, 476);
 			this.status.Name = "status";
 			this.status.Size = new System.Drawing.Size(747, 25);
@@ -199,6 +385,11 @@
 			this.l_status.Name = "l_status";
 			this.l_status.Size = new System.Drawing.Size(57, 20);
 			this.l_status.Text = "Started";
+			// 
+			// progressBar
+			// 
+			this.progressBar.Name = "progressBar";
+			this.progressBar.Size = new System.Drawing.Size(200, 19);
 			// 
 			// p_body
 			// 
@@ -248,6 +439,7 @@
 			this.dvg_grid.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dvg_grid.EnableHeadersVisualStyles = false;
 			this.dvg_grid.Location = new System.Drawing.Point(0, 70);
+			this.dvg_grid.Margin = new System.Windows.Forms.Padding(10);
 			this.dvg_grid.MultiSelect = false;
 			this.dvg_grid.Name = "dvg_grid";
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -276,6 +468,7 @@
 			this.dvg_grid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvg_grid_CellEnter);
 			this.dvg_grid.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvg_grid_CellLeave);
 			this.dvg_grid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvg_grid_CellValueChanged);
+			this.dvg_grid.SizeChanged += new System.EventHandler(this.dvg_grid_SizeChanged);
 			// 
 			// p_stopwatch
 			// 
@@ -294,8 +487,9 @@
 			this.b_stopwatchControl.Name = "b_stopwatchControl";
 			this.b_stopwatchControl.Size = new System.Drawing.Size(75, 23);
 			this.b_stopwatchControl.TabIndex = 2;
-			this.b_stopwatchControl.Text = "❚❚\r\n►";
+			this.b_stopwatchControl.Text = "❚❚\r\n";
 			this.b_stopwatchControl.UseVisualStyleBackColor = true;
+			this.b_stopwatchControl.Click += new System.EventHandler(this.b_stopwatchControl_Click);
 			// 
 			// tb_stopwatch
 			// 
@@ -307,15 +501,12 @@
 			// 
 			// l_stopwatch
 			// 
-			this.l_stopwatch.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.l_stopwatch.AutoSize = true;
 			this.l_stopwatch.Location = new System.Drawing.Point(275, 4);
 			this.l_stopwatch.Name = "l_stopwatch";
-			this.l_stopwatch.Size = new System.Drawing.Size(44, 17);
+			this.l_stopwatch.Size = new System.Drawing.Size(73, 17);
 			this.l_stopwatch.TabIndex = 0;
-			this.l_stopwatch.Text = "Timer";
+			this.l_stopwatch.Text = "Stopwatch";
 			// 
 			// p_control
 			// 
@@ -329,13 +520,9 @@
 			// 
 			// gb_cellOption
 			// 
-			this.gb_cellOption.Controls.Add(this.b_editDraft);
-			this.gb_cellOption.Controls.Add(this.b_removeDraft);
-			this.gb_cellOption.Controls.Add(this.b_addDraft);
-			this.gb_cellOption.Controls.Add(this.lb_draft);
-			this.gb_cellOption.Controls.Add(this.l_cellDraft);
-			this.gb_cellOption.Controls.Add(this.n_cellValue);
-			this.gb_cellOption.Controls.Add(this.l_cellValue);
+			this.gb_cellOption.Controls.Add(this.panel2);
+			this.gb_cellOption.Controls.Add(this.panel1);
+			this.gb_cellOption.Controls.Add(this.p_controlButtons);
 			this.gb_cellOption.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.gb_cellOption.Location = new System.Drawing.Point(0, 0);
 			this.gb_cellOption.Name = "gb_cellOption";
@@ -344,51 +531,15 @@
 			this.gb_cellOption.TabStop = false;
 			this.gb_cellOption.Text = "Selected Cell";
 			// 
-			// b_editDraft
+			// panel2
 			// 
-			this.b_editDraft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.b_editDraft.Location = new System.Drawing.Point(10, 269);
-			this.b_editDraft.Name = "b_editDraft";
-			this.b_editDraft.Size = new System.Drawing.Size(133, 23);
-			this.b_editDraft.TabIndex = 6;
-			this.b_editDraft.Text = "Edit";
-			this.b_editDraft.UseVisualStyleBackColor = true;
-			this.b_editDraft.Click += new System.EventHandler(this.b_editDraft_Click);
-			// 
-			// b_removeDraft
-			// 
-			this.b_removeDraft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.b_removeDraft.Location = new System.Drawing.Point(72, 298);
-			this.b_removeDraft.Name = "b_removeDraft";
-			this.b_removeDraft.Size = new System.Drawing.Size(71, 23);
-			this.b_removeDraft.TabIndex = 5;
-			this.b_removeDraft.Text = "Remove";
-			this.b_removeDraft.UseVisualStyleBackColor = true;
-			this.b_removeDraft.Click += new System.EventHandler(this.b_removeDraft_Click);
-			// 
-			// b_addDraft
-			// 
-			this.b_addDraft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.b_addDraft.Location = new System.Drawing.Point(7, 298);
-			this.b_addDraft.Name = "b_addDraft";
-			this.b_addDraft.Size = new System.Drawing.Size(66, 23);
-			this.b_addDraft.TabIndex = 4;
-			this.b_addDraft.Text = "Add";
-			this.b_addDraft.UseVisualStyleBackColor = true;
-			this.b_addDraft.Click += new System.EventHandler(this.b_addDraft_Click);
-			// 
-			// lb_draft
-			// 
-			this.lb_draft.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.lb_draft.FormattingEnabled = true;
-			this.lb_draft.ItemHeight = 16;
-			this.lb_draft.Location = new System.Drawing.Point(7, 93);
-			this.lb_draft.Name = "lb_draft";
-			this.lb_draft.Size = new System.Drawing.Size(136, 164);
-			this.lb_draft.TabIndex = 3;
-			this.lb_draft.SelectedIndexChanged += new System.EventHandler(this.lb_draft_SelectedIndexChanged);
+			this.panel2.Controls.Add(this.l_cellDraft);
+			this.panel2.Controls.Add(this.lb_draft);
+			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel2.Location = new System.Drawing.Point(3, 76);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(149, 216);
+			this.panel2.TabIndex = 9;
 			// 
 			// l_cellDraft
 			// 
@@ -396,27 +547,31 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.l_cellDraft.AutoSize = true;
-			this.l_cellDraft.Location = new System.Drawing.Point(7, 72);
+			this.l_cellDraft.Location = new System.Drawing.Point(3, 0);
 			this.l_cellDraft.Name = "l_cellDraft";
 			this.l_cellDraft.Size = new System.Drawing.Size(39, 17);
 			this.l_cellDraft.TabIndex = 2;
 			this.l_cellDraft.Text = "Draft";
 			// 
-			// n_cellValue
+			// lb_draft
 			// 
-			this.n_cellValue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.n_cellValue.Location = new System.Drawing.Point(7, 43);
-			this.n_cellValue.Maximum = new decimal(new int[] {
-            9,
-            0,
-            0,
-            0});
-			this.n_cellValue.Name = "n_cellValue";
-			this.n_cellValue.Size = new System.Drawing.Size(136, 22);
-			this.n_cellValue.TabIndex = 1;
-			this.n_cellValue.ValueChanged += new System.EventHandler(this.n_cellValue_ValueChanged);
+			this.lb_draft.FormattingEnabled = true;
+			this.lb_draft.ItemHeight = 16;
+			this.lb_draft.Location = new System.Drawing.Point(3, 20);
+			this.lb_draft.Name = "lb_draft";
+			this.lb_draft.Size = new System.Drawing.Size(137, 180);
+			this.lb_draft.TabIndex = 3;
+			this.lb_draft.SelectedIndexChanged += new System.EventHandler(this.lb_draft_SelectedIndexChanged);
+			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.l_cellValue);
+			this.panel1.Controls.Add(this.n_cellValue);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+			this.panel1.Location = new System.Drawing.Point(3, 18);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(149, 58);
+			this.panel1.TabIndex = 8;
 			// 
 			// l_cellValue
 			// 
@@ -424,11 +579,76 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.l_cellValue.AutoSize = true;
-			this.l_cellValue.Location = new System.Drawing.Point(7, 22);
+			this.l_cellValue.Location = new System.Drawing.Point(3, 0);
 			this.l_cellValue.Name = "l_cellValue";
 			this.l_cellValue.Size = new System.Drawing.Size(44, 17);
 			this.l_cellValue.TabIndex = 0;
 			this.l_cellValue.Text = "Value";
+			// 
+			// n_cellValue
+			// 
+			this.n_cellValue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.n_cellValue.Location = new System.Drawing.Point(3, 20);
+			this.n_cellValue.Maximum = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+			this.n_cellValue.Name = "n_cellValue";
+			this.n_cellValue.Size = new System.Drawing.Size(143, 22);
+			this.n_cellValue.TabIndex = 1;
+			this.n_cellValue.ValueChanged += new System.EventHandler(this.n_cellValue_ValueChanged);
+			// 
+			// p_controlButtons
+			// 
+			this.p_controlButtons.Controls.Add(this.b_addDraft);
+			this.p_controlButtons.Controls.Add(this.b_editDraft);
+			this.p_controlButtons.Controls.Add(this.b_removeDraft);
+			this.p_controlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.p_controlButtons.Location = new System.Drawing.Point(3, 292);
+			this.p_controlButtons.Name = "p_controlButtons";
+			this.p_controlButtons.Size = new System.Drawing.Size(149, 57);
+			this.p_controlButtons.TabIndex = 7;
+			// 
+			// b_addDraft
+			// 
+			this.b_addDraft.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.b_addDraft.Location = new System.Drawing.Point(3, 29);
+			this.b_addDraft.Name = "b_addDraft";
+			this.b_addDraft.Size = new System.Drawing.Size(66, 23);
+			this.b_addDraft.TabIndex = 4;
+			this.b_addDraft.Text = "Add";
+			this.b_addDraft.UseVisualStyleBackColor = true;
+			this.b_addDraft.Click += new System.EventHandler(this.b_addDraft_Click);
+			// 
+			// b_editDraft
+			// 
+			this.b_editDraft.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.b_editDraft.Location = new System.Drawing.Point(3, 3);
+			this.b_editDraft.Name = "b_editDraft";
+			this.b_editDraft.Size = new System.Drawing.Size(143, 23);
+			this.b_editDraft.TabIndex = 6;
+			this.b_editDraft.Text = "Edit";
+			this.b_editDraft.UseVisualStyleBackColor = true;
+			this.b_editDraft.Click += new System.EventHandler(this.b_editDraft_Click);
+			// 
+			// b_removeDraft
+			// 
+			this.b_removeDraft.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.b_removeDraft.Location = new System.Drawing.Point(75, 29);
+			this.b_removeDraft.Name = "b_removeDraft";
+			this.b_removeDraft.Size = new System.Drawing.Size(71, 23);
+			this.b_removeDraft.TabIndex = 5;
+			this.b_removeDraft.Text = "Remove";
+			this.b_removeDraft.UseVisualStyleBackColor = true;
+			this.b_removeDraft.Click += new System.EventHandler(this.b_removeDraft_Click);
+			// 
+			// tp_pronunciation
+			// 
+			this.tp_pronunciation.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+			this.tp_pronunciation.ToolTipTitle = "Pronunciation";
 			// 
 			// Frame
 			// 
@@ -441,11 +661,13 @@
 			this.Controls.Add(this.status);
 			this.Controls.Add(this.p_header);
 			this.Controls.Add(this.menu);
+			this.Icon = global::Genki.Properties.Resources.Icon64;
 			this.MainMenuStrip = this.menu;
 			this.MinimumSize = new System.Drawing.Size(640, 480);
 			this.Name = "Frame";
 			this.Text = "Genki";
-			this.Resize += new System.EventHandler(this.frame_Resize);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frame_FormClosing);
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Frame_FormClosed);
 			this.menu.ResumeLayout(false);
 			this.menu.PerformLayout();
 			this.p_header.ResumeLayout(false);
@@ -458,8 +680,12 @@
 			this.p_stopwatch.PerformLayout();
 			this.p_control.ResumeLayout(false);
 			this.gb_cellOption.ResumeLayout(false);
-			this.gb_cellOption.PerformLayout();
+			this.panel2.ResumeLayout(false);
+			this.panel2.PerformLayout();
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.n_cellValue)).EndInit();
+			this.p_controlButtons.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -471,7 +697,7 @@
 		private System.Windows.Forms.ToolStripMenuItem mi_file;
 		private System.Windows.Forms.ToolStripMenuItem mi_newGame;
 		private System.Windows.Forms.ToolStripMenuItem mi_save;
-		private System.Windows.Forms.ToolStripMenuItem mi_load;
+		private System.Windows.Forms.ToolStripMenuItem mi_open;
 		private System.Windows.Forms.ToolStripMenuItem mi_exit;
 		private System.Windows.Forms.ToolStripMenuItem mi_edit;
 		private System.Windows.Forms.ToolStripMenuItem mi_help;
@@ -479,7 +705,7 @@
 		private System.Windows.Forms.Panel p_header;
 		private System.Windows.Forms.Label l_titleKanji;
 		private System.Windows.Forms.Label l_titleEnglish;
-		private System.Windows.Forms.Label l_titlerHirigana;
+		private System.Windows.Forms.Label l_titleHirigana;
 		private System.Windows.Forms.StatusStrip status;
 		private System.Windows.Forms.ToolStripStatusLabel l_status;
 		private System.Windows.Forms.Panel p_body;
@@ -497,6 +723,29 @@
 		private System.Windows.Forms.Label l_stopwatch;
 		private System.Windows.Forms.TextBox tb_stopwatch;
 		private System.Windows.Forms.Button b_stopwatchControl;
+		private System.Windows.Forms.ToolStripMenuItem mi_debug;
+		private System.Windows.Forms.ToolStripMenuItem mi_breakNow;
+		private System.Windows.Forms.ToolStripMenuItem mi_printGrid;
+		private System.Windows.Forms.ToolStripMenuItem mi_printVirtualGrid;
+		private System.Windows.Forms.ToolStripMenuItem mi_printPhysicalGrid;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+		private System.Windows.Forms.ToolTip tp_pronunciation;
+		private System.Windows.Forms.ToolStripMenuItem mi_magicDebug;
+		private System.Windows.Forms.ToolStripMenuItem mi_forceCopyDebug;
+		private System.Windows.Forms.ToolStripMenuItem mi_solveSudokuDebug;
+		private System.Windows.Forms.ToolStripMenuItem mi_undo;
+		private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
+		private System.Windows.Forms.ToolStripProgressBar progressBar;
+		private System.Windows.Forms.ToolStripMenuItem mi_window;
+		private System.Windows.Forms.ToolStripMenuItem mi_displayHeader;
+		private System.Windows.Forms.Panel p_controlButtons;
+		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.ToolStripMenuItem mi_helpMe;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+		private System.Windows.Forms.ToolStripMenuItem mi_openRecently;
+		private System.Windows.Forms.ToolStripMenuItem mi_saveAs;
 	}
 }
 

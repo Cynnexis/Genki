@@ -3,17 +3,30 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine.CellEngine
 {
+	[Serializable, DataContract, XmlRoot("Cell")]
 	public class Cell
 	{
 		/// <summary>
 		/// The coordinates start from (1, 1)
 		/// </summary>
+		[DataMember]
 		private Point _coordinates;
+		[DataMember]
+		private byte _value = 0;
+		[DataMember]
+		private ObservableCollection<byte> _draft = new ObservableCollection<byte>();
+		[DataMember]
+		private bool readOnly = false;
+		[NonSerialized]
+		private CellListener _cellListeners = new CellListener();
+
 		public Point Coordinates
 		{
 			get { return _coordinates; }
@@ -26,8 +39,6 @@ namespace Genki.SudokuEngine.CellEngine
 			}
 		}
 
-
-		private byte _value = 0;
 		public byte Value
 		{
 			get { return _value; }
@@ -40,30 +51,78 @@ namespace Genki.SudokuEngine.CellEngine
 			}
 		}
 
-		private CellListener _cellListeners = new CellListener();
-		public CellListener CellListeners
-		{
-			get { return _cellListeners; }
-			set { _cellListeners = value; }
-		}
-
-		private ObservableCollection<byte> _draft = new ObservableCollection<byte>();
 		public ObservableCollection<byte> Draft
 		{
 			get { return _draft; }
 			set { _draft = value; }
 		}
+
+		public bool ReadOnly
+		{
+			get { return readOnly; }
+			set { readOnly = value; }
+		}
+
+		public CellListener CellListeners
+		{
+			get { return _cellListeners; }
+			set { _cellListeners = value; }
+		}
 		
 
 
-		public Cell(Point coordinates, byte value = 0, CellListener cellListeners = null, ObservableCollection<byte> draft = null)
+		public Cell(Point coordinates, byte value = 0, CellListener cellListeners = null, bool readOnly = false, ObservableCollection<byte> draft = null)
 		{
 			this.Coordinates = coordinates;
 			this.Value = value;
-			if (cellListeners != null)
-				this.CellListeners = cellListeners;
 			if (draft != null)
 				this.Draft = draft;
+			this.ReadOnly = readOnly;
+			if (cellListeners != null)
+				this.CellListeners = cellListeners;
+		}
+
+		public override string ToString()
+		{
+			// Coordinates
+			string sCoord = "";
+			if (Coordinates != null)
+				sCoord += "(" + Coordinates.X.ToString() + " ; " + Coordinates.Y.ToString() + ")";
+			else
+				sCoord = "(null)";
+
+			// Draft
+			string sDraft = "[";
+			if (Draft != null)
+			{
+				if (Draft.Count > 0)
+				{
+					for (int i = 0; i < Draft.Count - 1; i++)
+						sDraft += Draft[i].ToString() + ", ";
+					sDraft += Draft[Draft.Count - 1] + "]";
+				}
+				else
+					sDraft = "[]";
+			}
+			else
+				sDraft = "(null)";
+
+			return "Cell{" +
+				"Coordinates=" + sCoord + ", " +
+				"Value=" + Value.ToString() + ", " +
+				"Draft=\"" + sDraft + "\"" +
+				"ReadOnly=\"" + ReadOnly.ToString() + "\"" +
+				"CellListeners=\"" + CellListeners?.ToString() + "\", " +
+				"}";
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+				return false;
+
+			Cell c = (Cell) obj;
+			return this.Value == c.Value;
 		}
 	}
 }

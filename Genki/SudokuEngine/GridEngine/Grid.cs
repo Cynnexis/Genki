@@ -1,18 +1,30 @@
 ﻿using Genki.SudokuEngine.CellEngine;
+using System;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine.GridEngine
 {
+	[Serializable, DataContract, XmlRoot("Grid")]
 	public class Grid
 	{
 		public const uint NB_ROWS = 9;
 		public const uint NB_COLUMNS = 9;
-
-		/// <summary>
-		/// Standard: Cell[column][row]
-		/// </summary>
+		
+		[DataMember]
 		private Cell[][] _cells = null;
+		
+		[NonSerialized]
+		private GridListener actionOnGrid = null;
+
+		public GridListener ActionOnGrid
+		{
+			get { return actionOnGrid; }
+			set { actionOnGrid = value; }
+		}
+		
 		/// <summary>
-		/// Standard: Cell[column][row]
+		/// Standard: Cell[column][row] from 0
 		/// </summary>
 		private Cell[][] Cells
 		{
@@ -30,18 +42,24 @@ namespace Genki.SudokuEngine.GridEngine
 			set
 			{
 				Cells[i][j] = value;
-				gl.onGridChanged(i + 1, j + 1, value.Value);
+				ActionOnGrid.ActionOnGridChange(i + 1, j + 1, value.Value);
+			}
+		}
+		public Cell[] this[int i]
+		{
+			get
+			{
+				return Cells[i];
 			}
 		}
 
-		public GridListener gl { get; set; }
 
-		public Grid(GridListener gridListener = null)
+		public Grid(GridListener gridListener = null, Grid copy = null)
 		{
 			if (gridListener != null)
-				this.gl = gridListener;
+				this.ActionOnGrid = gridListener;
 			else
-				this.gl = new GridListener((x, y, value) => { });
+				this.ActionOnGrid = new GridListener((x, y, value) => { });
 
 			Cells = new Cell[NB_ROWS][];
 
@@ -53,8 +71,8 @@ namespace Genki.SudokuEngine.GridEngine
 			{
 				for (int j = 0; j < NB_COLUMNS; j++)
 				{
-					this.Cells[i][j] = new Cell(new System.Drawing.Point(i + 1, j + 1), 0, new CellListener(
-						(value) => { gl.onGridChanged(i + 1, j + 1, value); },
+					this.Cells[i][j] = new Cell(new System.Drawing.Point(i + 1, j + 1), (copy == null ? (byte) 0 : copy[i, j].Value), new CellListener(
+						(value) => { ActionOnGrid.ActionOnGridChange(i + 1, j + 1, value); },
 						(draft) => { })
 					);
 				}
@@ -75,7 +93,7 @@ namespace Genki.SudokuEngine.GridEngine
 					if (this.Cells[i][j] == null)
 					{
 						this.Cells[i][j] = new Cell(new System.Drawing.Point(i + 1, j + 1), 0, new CellListener(
-							(value) => { gl.onGridChanged(i + 1, j + 1, value); },
+							(value) => { ActionOnGrid.ActionOnGridChange(i + 1, j + 1, value); },
 							(draft) => { })
 						);
 					}
@@ -88,6 +106,21 @@ namespace Genki.SudokuEngine.GridEngine
 					}
 				}
 			}
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+				return false;
+
+			bool result = true;
+			Grid g = (Grid) obj;
+			for (int i = 0; i < g.Cells.Length && result; i++)
+				for (int j = 0; j < g.Cells[i].Length && result; j++)
+					if (!this[i, j].Equals(g[i, j]))
+						result = false;
+
+			return result;
 		}
 	}
 }

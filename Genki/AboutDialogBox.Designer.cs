@@ -27,7 +27,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutDialogBox));
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.pb_logo = new System.Windows.Forms.PictureBox();
 			this.l_productName = new System.Windows.Forms.Label();
@@ -69,7 +68,7 @@
 			// pb_logo
 			// 
 			this.pb_logo.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.pb_logo.Image = ((System.Drawing.Image)(resources.GetObject("pb_logo.Image")));
+			this.pb_logo.Image = global::Genki.Properties.Resources.Splashscreen;
 			this.pb_logo.Location = new System.Drawing.Point(4, 4);
 			this.pb_logo.Margin = new System.Windows.Forms.Padding(4);
 			this.pb_logo.Name = "pb_logo";
@@ -161,6 +160,7 @@
 			this.ClientSize = new System.Drawing.Size(580, 348);
 			this.Controls.Add(this.tableLayoutPanel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.Icon = global::Genki.Properties.Resources.Icon64;
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
