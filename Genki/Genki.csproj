@@ -69,6 +69,7 @@
     <Compile Include="Saver.cs" />
     <Compile Include="SudokuEngine\CellEngine\Cell.cs" />
     <Compile Include="SudokuEngine\CellEngine\CellListener.cs" />
+    <Compile Include="SudokuEngine\Exceptions\DimensionsNotEqualException.cs" />
     <Compile Include="SudokuEngine\Game.cs" />
     <Compile Include="SudokuEngine\GameState.cs" />
     <Compile Include="SudokuEngine\GridEngine\Grid.cs" />

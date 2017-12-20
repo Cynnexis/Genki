@@ -1,4 +1,5 @@
 ﻿using Genki.SudokuEngine.CellEngine;
+using Genki.SudokuEngine.Exceptions;
 using System;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
@@ -29,7 +30,7 @@ namespace Genki.SudokuEngine.GridEngine
 		private Cell[][] Cells
 		{
 			get { return _cells; }
-			set { _cells = value; }
+			set { _cells = value;}
 		}
 
 		// Indexer (see https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/indexers/index)
@@ -42,11 +43,19 @@ namespace Genki.SudokuEngine.GridEngine
 			set
 			{
 				Cells[i][j] = value;
-				ActionOnGrid.ActionOnGridChange(i + 1, j + 1, value.Value);
+				ActionOnGrid.ActionOnGridChange(i, j, value.Value);
 			}
 		}
 		public Cell[] this[int i]
 		{
+			set
+			{
+				if (value.Length != NB_ROWS)
+					throw new IndexOutOfRangeException("Expected length : " + NB_ROWS + ", length found : " + value.Length);
+				Cells[i] = value;
+				for (int j = 0; j < NB_ROWS; j++)
+					Cells[i][j] = value[j];
+			}
 			get
 			{
 				return Cells[i];
@@ -61,18 +70,15 @@ namespace Genki.SudokuEngine.GridEngine
 			else
 				this.ActionOnGrid = new GridListener((x, y, value) => { });
 
-			Cells = new Cell[NB_ROWS][];
-
-			// TODO: Optimiser les boucles 'for{for}; for' en un 'for {for; for}' (plus rapide)
-			for (int i = 0; i < Cells.Length; i++)
-				this.Cells[i] = new Cell[NB_ROWS];
-
-			for (int i = 0; i < NB_ROWS; i++)
+			Cells = new Cell[NB_COLUMNS][];
+			
+			for (int i = 0; i < NB_COLUMNS; i++)
 			{
-				for (int j = 0; j < NB_COLUMNS; j++)
+				this.Cells[i] = new Cell[NB_ROWS];
+				for (int j = 0; j < NB_ROWS; j++)
 				{
 					this.Cells[i][j] = new Cell(new System.Drawing.Point(i + 1, j + 1), (copy == null ? (byte) 0 : copy[i, j].Value), new CellListener(
-						(value) => { ActionOnGrid.ActionOnGridChange(i + 1, j + 1, value); },
+						(value) => { ActionOnGrid.ActionOnGridChange(i, j, value); },
 						(draft) => { })
 					);
 				}
@@ -93,7 +99,7 @@ namespace Genki.SudokuEngine.GridEngine
 					if (this.Cells[i][j] == null)
 					{
 						this.Cells[i][j] = new Cell(new System.Drawing.Point(i + 1, j + 1), 0, new CellListener(
-							(value) => { ActionOnGrid.ActionOnGridChange(i + 1, j + 1, value); },
+							(value) => { ActionOnGrid.ActionOnGridChange(i - 1, j - 1, value); },
 							(draft) => { })
 						);
 					}
@@ -105,6 +111,35 @@ namespace Genki.SudokuEngine.GridEngine
 							this.Cells[i][j].Draft.Clear();
 					}
 				}
+			}
+		}
+
+		public Grid Transpose(Grid g)
+		{
+			if (NB_COLUMNS != NB_ROWS)
+				throw new DimensionsNotEqualException();
+
+			Grid tmp = new Grid();
+
+			for (int i = 0; i < NB_ROWS; i++)
+				for (int j = 0; j < NB_COLUMNS; j++)
+					tmp[i, j] = g[j, i];
+
+			return g;
+		}
+		public Grid Transpose()
+		{
+			return Transpose(this);
+		}
+
+		public void SetValues(Grid newGrid)
+		{
+			if (newGrid != null)
+			{
+				for (int i = 0; i < NB_ROWS; i++)
+					for (int j = 0; j < NB_COLUMNS; j++)
+						if (newGrid[i, j] != null)
+							this[i, j].Value = newGrid[i, j].Value;
 			}
 		}
 

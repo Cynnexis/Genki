@@ -48,19 +48,28 @@ namespace Genki.SudokuEngine.CellEngine
 					_value = value;
 				else
 					_value = 0;
+				CellListeners?.onValueChange(Value);
 			}
 		}
 
 		public ObservableCollection<byte> Draft
 		{
 			get { return _draft; }
-			set { _draft = value; }
+			set
+			{
+				_draft = value;
+				CellListeners?.onDraftChange(Draft);
+			}
 		}
 
 		public bool ReadOnly
 		{
 			get { return readOnly; }
-			set { readOnly = value; }
+			set
+			{
+				readOnly = value;
+				CellListeners?.onReadOnlyChange(ReadOnly);
+			}
 		}
 
 		public CellListener CellListeners
@@ -76,7 +85,10 @@ namespace Genki.SudokuEngine.CellEngine
 			this.Coordinates = coordinates;
 			this.Value = value;
 			if (draft != null)
+			{
 				this.Draft = draft;
+				this.Draft.CollectionChanged += (sender, e) => { CellListeners?.onDraftChange(Draft); };
+			}
 			this.ReadOnly = readOnly;
 			if (cellListeners != null)
 				this.CellListeners = cellListeners;

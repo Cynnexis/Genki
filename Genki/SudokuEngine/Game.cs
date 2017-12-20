@@ -20,6 +20,8 @@ namespace Genki.SudokuEngine
 	[Serializable,DataContract, XmlRoot("Game")]
 	public class Game
 	{
+		#region Declarations
+		#region Variables
 		[NonSerialized]
 		private int ColumnProduct = 0;
 		[NonSerialized]
@@ -43,8 +45,9 @@ namespace Genki.SudokuEngine
 
 		[NonSerialized]
 		private ActionOnGameState onGameStateChange = null;
+		#endregion
 
-
+		#region Properties
 		public GameState State {
 			get { return state; }
 			set
@@ -92,7 +95,10 @@ namespace Genki.SudokuEngine
 			get { return onGameStateChange; }
 			set { onGameStateChange = value; }
 		}
+		#endregion
+		#endregion
 
+		#region Constructor & Initialization
 		/// <summary>
 		/// Construct a game instance by initilizing the grid (with <paramref name="gl"/>), the variables <c>ColumnProduct</c>,
 		/// <c>ColumnSum</c>, <c>RowProduct</c> and <c>RowSum</c>. This constructor do not compute any grid (you must call <c>ComputeGrid</c> method).
@@ -103,6 +109,7 @@ namespace Genki.SudokuEngine
 			this.OnGameStateChange = OnGameStateChange != null ? OnGameStateChange : new ActionOnGameState((oldState, newState) => { });
 			State = GameState.PAUSE;
 			SudokuGrid = new Grid(gl); // The constructor init the grid
+			Solution = new Grid();
 
 			InitConst();
 
@@ -114,9 +121,6 @@ namespace Genki.SudokuEngine
 
 		public void LoadGameInstance(Game g)
 		{
-#if DEBUG
-			//Debugger.Break();
-#endif
 			if (g != null)
 			{
 				State = GameState.PAUSE;
@@ -174,6 +178,7 @@ namespace Genki.SudokuEngine
 				RowSum += i;
 			}
 		}
+		#endregion
 
 		#region Compute Grid
 		public void ComputeGrid(Action OnGridFound = null)
@@ -184,17 +189,19 @@ namespace Genki.SudokuEngine
 		}
 		private void ComputeGridContent(Action OnGridFound = null)
 		{
-#if DEBUG
-			Console.WriteLine("DEBUG> Computing grid...");
-#endif
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
 			do
 			{
 				InitGrid();
+				Solution = new Grid(null, SudokuGrid);
 				SolveGrid(ref solution);
-			} while (Solution == null);
-#if DEBUG
-			Console.WriteLine("DEBUG> Grid found!");
-#endif
+			} while ((Solution == null || !IsFull(Solution)) && stopwatch.ElapsedMilliseconds <= 10000);
+
+			// Check if the program found a grid, or timeout
+			if (stopwatch.ElapsedMilliseconds > 10000)
+				SetDefaultGrid();
+
 			// If OnGridFound is not null, then call it
 			OnGridFound?.Invoke();
 		}
@@ -252,6 +259,49 @@ namespace Genki.SudokuEngine
 #endif
 			}
 		}
+
+		/// <summary>
+		/// Set a default grid with a pre-computed solution
+		/// </summary>
+		public void SetDefaultGrid()
+		{
+			int[][] problem = new int[][]
+				{
+					new int[] { 0, 0, 0, 0, 0, 0, 6, 8, 0},
+					new int[] { 0, 0, 0, 0, 7, 3, 0, 0, 9},
+					new int[] { 3, 0, 9, 0, 0, 0, 0, 4, 5},
+					new int[] { 4, 9, 0, 0, 0, 0, 0, 0, 0},
+					new int[] { 8, 0, 3, 0, 5, 0, 9, 0, 2},
+					new int[] { 0, 0, 0, 0, 0, 0, 0, 3, 6},
+					new int[] { 9, 6, 0, 0, 0, 0, 3, 0, 8},
+					new int[] { 7, 0, 0, 6, 8, 0, 0, 0, 0},
+					new int[] { 0, 2, 8, 0, 0, 0, 0, 0, 0}
+				};
+
+			int[][] solution = new int[][]
+			{
+					new int[] { 1, 7, 2, 5, 4, 9, 6, 8, 3},
+					new int[] { 6, 4, 5, 8, 7, 3, 2, 1, 9},
+					new int[] { 3, 8, 9, 2, 6, 1, 7, 4, 5},
+					new int[] { 4, 9, 6, 3, 2, 1, 8, 5, 1},
+					new int[] { 8, 1, 3, 4, 5, 6, 9, 7, 2},
+					new int[] { 2, 5, 7, 1, 9, 8, 4, 3, 6},
+					new int[] { 9, 6, 4, 7, 1, 5, 3, 2, 8},
+					new int[] { 7, 3, 1, 6, 8, 2, 5, 9, 4},
+					new int[] { 5, 2, 8, 9, 3, 4, 1, 6, 7}
+			};
+
+			for (int i = 0; i < Grid.NB_COLUMNS; i++)
+				for (int j = 0; j < Grid.NB_ROWS; j++)
+					SudokuGrid[i, j].Value = (byte)problem[i][j];
+
+			for (int i = 0; i < Grid.NB_COLUMNS; i++)
+				for (int j = 0; j < Grid.NB_ROWS; j++)
+					Solution[i, j].Value = (byte)solution[i][j];
+
+			SudokuGrid.SetValues(SudokuGrid.Transpose());
+			Solution.SetValues(Solution.Transpose());
+		}
 		#endregion
 
 		#region Solve Grid
@@ -274,7 +324,7 @@ namespace Genki.SudokuEngine
 				return true;
 
 			int i = pos % (int) Grid.NB_COLUMNS; // i is the column
-			int j = pos / (int) Grid.NB_ROWS; // i is the row
+			int j = pos / (int) Grid.NB_ROWS; // j is the row
 
 			if (g[i, j].Value != 0)
 				return SolveGridRec(ref g, pos + 1);
@@ -590,7 +640,7 @@ namespace Genki.SudokuEngine
 					}
 				}
 
-				return notZeroDetected;
+				return !notZeroDetected;
 			}
 			return false;
 		}
@@ -603,31 +653,60 @@ namespace Genki.SudokuEngine
 		#region Is Full
 		public bool IsFull(Grid g)
 		{
-			if (g != null)
-			{
-				bool zeroDetected = false;
+			if (g == null)
+				return false;
 
-				for (int i = 0; i < Grid.NB_COLUMNS && !zeroDetected; i++)
+			bool zeroDetected = false;
+
+			for (int i = 0; i < Grid.NB_COLUMNS && !zeroDetected; i++)
+			{
+				for (int j = 0; j < Grid.NB_ROWS && !zeroDetected; j++)
 				{
-					for (int j = 0; j < Grid.NB_ROWS && !zeroDetected; j++)
+					if (g[i, j] != null)
 					{
-						if (g[i, j] != null)
-						{
-							if (g[i, j].Value == 0)
-								zeroDetected = true;
-						}
-						else
+						if (g[i, j].Value == 0)
 							zeroDetected = true;
 					}
+					else
+						zeroDetected = true;
 				}
-
-				return zeroDetected;
 			}
-			return false;
+
+			return !zeroDetected;
 		}
 		public bool IsFull()
 		{
 			return IsFull(this.SudokuGrid);
+		}
+		#endregion
+
+		#region Format Grid
+		public static string FormatGrid(Grid g)
+		{
+			string result = "";
+
+			for (int j = 0; j < Grid.NB_ROWS; j++)
+			{
+				for (int i = 0; i < Grid.NB_COLUMNS; i++)
+				{
+					result += g[i, j].Value != 0 ? g[i, j].Value.ToString() : " ";
+					if (i == 2 || i == 5)
+						result += "|";
+					else
+						result += " ";
+				}
+
+				result += '\n';
+
+				if (j == 2 || j == 5)
+				{
+					for (int i = 0; i < Grid.NB_COLUMNS * 2 + 2; i++)
+						result += "-";
+
+					result += '\n';
+				}
+			}
+			return result;
 		}
 		#endregion
 	}

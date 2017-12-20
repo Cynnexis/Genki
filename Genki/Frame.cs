@@ -65,23 +65,17 @@ namespace Genki
 				{
 					try
 					{
-						if (game.State == GameState.PLAYING)
+						if (x >= 0 && x < Grid.NB_COLUMNS && y >= 0 && y < Grid.NB_ROWS)
 						{
 							if (value != 0)
-								dvg_grid[x - 1, y - 1].Value = value;
+								dvg_grid[x, y].Value = value;
 							else
-								dvg_grid[x - 1, y - 1].Value = "";
-							dvg_grid[x - 1, y - 1].ValueType = typeof(string);
+								dvg_grid[x, y].Value = "";
+							dvg_grid[x, y].ValueType = typeof(string);
 						}
 					}
 					catch (Exception e)
 					{
-						System.Console.Error.WriteLine(e.StackTrace);
-#if DEBUG
-						MessageBox.Show("An error occured during the update of " +
-							"dvg_grid[" + (x - 1) + ", " + (y - 1) + "] in a delegate method.",
-							"Error: DEBUG", MessageBoxButtons.OK);
-#endif
 					}
 				}
 			), new Action(
@@ -89,12 +83,41 @@ namespace Genki
 				{
 					SyncStopwatch();
 				}
+			), new ActionOnGameState(
+				(oldState, newState) =>
+				{
+					switch (newState)
+					{
+						case GameState.PLAYING:
+							b_stopwatchControl.Enabled = true;
+							n_cellValue.Enabled = true;
+							lb_draft.Enabled = true;
+							b_editDraft.Enabled = true;
+							b_addDraft.Enabled = true;
+							b_removeDraft.Enabled = true;
+							break;
+						default:
+							b_stopwatchControl.Enabled = false;
+							n_cellValue.Enabled = false;
+							lb_draft.Enabled = false;
+							b_editDraft.Enabled = false;
+							b_addDraft.Enabled = false;
+							b_removeDraft.Enabled = false;
+							break;
+					}
+				}
 			));
 
 			l_status.Text = "To start playing, click on File > New Game";
 		}
 
 		#region Frame Events
+		private void Frame_Shown(object sender, EventArgs e)
+		{
+			// Updating the position of components depending of the size of their parent.
+			dvg_grid_SizeChanged(sender, e);
+		}
+
 		private void Frame_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			game.SudokuStopwatch.StopThread();
@@ -113,12 +136,10 @@ namespace Genki
 		{
 			l_status.Text = "Grid generated. Have fun!";
 #if DEBUG
-			Console.WriteLine("Virtual Grid:");
 			mi_printVirtualGrid_Click(null, null);
 #endif
 			CopyGridIntoDVG();
 #if DEBUG
-			Console.WriteLine("Physical Grid:");
 			mi_printPhysicalGrid_Click(null, null);
 #endif
 			for (int i = 0; i < dvg_grid.ColumnCount; i++)
@@ -282,7 +303,7 @@ namespace Genki
 		private void dvg_grid_SizeChanged(object sender, EventArgs e)
 		{
 			foreach (DataGridViewRow row in dvg_grid.Rows)
-				row.Height = dvg_grid.ClientRectangle.Height / dvg_grid.Rows.Count;
+				row.Height = dvg_grid.Height / dvg_grid.Rows.Count;
 		}
 
 		/// <summary>
@@ -344,15 +365,16 @@ namespace Genki
 			if (!(value >= 0 && value <= 9))
 				value = 0;
 			
-			if (game != null && value != 0 && (game.State == GameState.PLAYING || forceChangeCell))
+			if (game != null && (game.State == GameState.PLAYING || forceChangeCell))
 			{
 				game.SudokuGrid[x, y].Value = value;
+				
 				if (value != 0)
 					dvg_grid[x, y].Value = value.ToString();
 				else
 					dvg_grid[x, y].Value = "";
 				dvg_grid[x, y].ValueType = typeof(string);
-
+				
 				forceChangeCell = false;
 			}
 		}
@@ -424,19 +446,23 @@ namespace Genki
 		#region Draft Buttons Events
 		private void b_editDraft_Click(object sender, EventArgs e)
 		{
-			if (lb_draft.SelectedIndex != -1 && activeCell.X != -1 && activeCell.Y != -1)
+			if (lb_draft.SelectedIndex != -1 && activeCell.X != -1 && activeCell.Y != -1 && game.State == GameState.PLAYING)
 			{
 				try
 				{
-					char result = Microsoft.VisualBasic.Interaction.InputBox("Enter the new value:", "Edit Draft: " + lb_draft.SelectedItem.ToString(), game.SudokuGrid[activeCell.X, activeCell.Y].Value.ToString())[0];
-					if (char.IsNumber(result) && result >= '0' && result <= '9')
+					string answer = Microsoft.VisualBasic.Interaction.InputBox("Enter the new value:", "Edit Draft: " + lb_draft.SelectedItem.ToString(), game.SudokuGrid[activeCell.X, activeCell.Y].Value.ToString());
+					if (answer != null && answer.Length > 0)
 					{
-						byte value = Convert.ToByte(result - '0');
-						game.SudokuGrid[activeCell.X, activeCell.Y].Draft[lb_draft.SelectedIndex] = value;
-						lb_draft.Items[lb_draft.SelectedIndex] = value;
+						char result = answer[0];
+						if (char.IsNumber(result) && result >= '0' && result <= '9')
+						{
+							byte value = Convert.ToByte(result - '0');
+							game.SudokuGrid[activeCell.X, activeCell.Y].Draft[lb_draft.SelectedIndex] = value;
+							lb_draft.Items[lb_draft.SelectedIndex] = value;
+						}
+						else
+							MessageBox.Show("Invalid format.", "Error", MessageBoxButtons.OK);
 					}
-					else
-						MessageBox.Show("Invalid format.", "Error", MessageBoxButtons.OK);
 				} catch (IndexOutOfRangeException ex)
 				{
 					System.Console.Error.WriteLine(ex.StackTrace);
@@ -446,23 +472,27 @@ namespace Genki
 
 		private void b_addDraft_Click(object sender, EventArgs e)
 		{
-			if (activeCell.X != -1 && activeCell.Y != -1)
+			if (activeCell.X != -1 && activeCell.Y != -1 && game.State == GameState.PLAYING)
 			{
-				char result = Microsoft.VisualBasic.Interaction.InputBox("Enter a value:", "Add Draft", "0")[0];
-				if (char.IsNumber(result) && result >= '0' && result <= '9')
+				string answer = Microsoft.VisualBasic.Interaction.InputBox("Enter a value:", "Add Draft", "0");
+				if (answer != null && answer.Length > 0)
 				{
-					byte value = Convert.ToByte(result - '0');
-					game.SudokuGrid[activeCell.X, activeCell.Y].Draft.Add(value);
-					lb_draft.Items.Add(value);
+					char result = answer[0];
+					if (char.IsNumber(result) && result >= '0' && result <= '9')
+					{
+						byte value = Convert.ToByte(result - '0');
+						game.SudokuGrid[activeCell.X, activeCell.Y].Draft.Add(value);
+						lb_draft.Items.Add(value);
+					}
+					else
+						MessageBox.Show("Invalid format.", "Error", MessageBoxButtons.OK);
 				}
-				else
-					MessageBox.Show("Invalid format.", "Error", MessageBoxButtons.OK);
 			}
 		}
 
 		private void b_removeDraft_Click(object sender, EventArgs e)
 		{
-			if (lb_draft.SelectedIndex != -1 && activeCell.X != -1 && activeCell.Y != -1)
+			if (lb_draft.SelectedIndex != -1 && activeCell.X != -1 && activeCell.Y != -1 && game.State == GameState.PLAYING)
 			{
 				if (MessageBox.Show("Are you sure you want to delete the draft " + lb_draft.SelectedItem.ToString() + " of the cell (" + (activeCell.X + 1) + " ; " + (activeCell.Y + 1) + ")?", "Delete draft " + lb_draft.SelectedItem.ToString(), MessageBoxButtons.YesNo) == DialogResult.Yes)
 				{
@@ -478,6 +508,7 @@ namespace Genki
 		private void mi_newGame_Click(object sender, EventArgs e)
 		{
 			progressBar.Style = ProgressBarStyle.Marquee;
+			l_status.Text = "Computing...";
 
 			// Reseting the dvg_grid and sudokugrid object
 			for (int i = 0; i < dvg_grid.ColumnCount; i++)
@@ -569,71 +600,35 @@ namespace Genki
 		#region Print Grid Events
 		private void mi_printVirtualGrid_Click(object sender, EventArgs e)
 		{
-			byte[][] g = new byte[Grid.NB_COLUMNS][];
-
-			for (int i = 0; i < Grid.NB_COLUMNS; i++)
-				g[i] = new byte[Grid.NB_ROWS];
-
-			for (int i = 0; i < Grid.NB_COLUMNS; i++)
-				for (int j = 0; j < Grid.NB_ROWS; j++)
-					g[i][j] = game.SudokuGrid[i, j].Value;
-
-			printSudokuGrid(g, Grid.NB_COLUMNS, Grid.NB_ROWS);
+			Console.WriteLine("Virtual grid:");
+			Console.WriteLine(Game.FormatGrid(game.SudokuGrid));
 		}
 
 		private void mi_printPhysicalGrid_Click(object sender, EventArgs e)
 		{
-			byte[][] g = new byte[Grid.NB_COLUMNS][];
-
-			for (int i = 0; i < Grid.NB_COLUMNS; i++)
-				g[i] = new byte[Grid.NB_ROWS];
+			Grid physical = new Grid();
 
 			for (int i = 0; i < Grid.NB_COLUMNS; i++)
 			{
 				for (int j = 0; j < Grid.NB_ROWS; j++)
 				{
 					if (Convert.ToString(dvg_grid[i, j].Value).Equals(""))
-						g[i][j] = 0;
+						physical[i, j] = new Cell(new Point(i+1, j+1), 0);
 					else
-						g[i][j] = Convert.ToByte(this.dvg_grid[i, j].Value);
+						physical[i, j] = new Cell(new Point(i + 1, j + 1), Convert.ToByte(this.dvg_grid[i, j].Value));
 				}
 			}
 
-			printSudokuGrid(g, Grid.NB_COLUMNS, Grid.NB_ROWS);
+			Console.WriteLine("Physical grid:");
+			Console.WriteLine(Game.FormatGrid(physical));
 		}
 
-		private void printSudokuGrid(byte[][] grid, uint nb_columns, uint nb_rows)
+		private void mi_printSolutionGrid_Click(object sender, EventArgs e)
 		{
-			try
-			{
-				for (int j = 0; j < nb_rows; j++)
-				{
-					for (int i = 0; i < nb_columns; i++)
-					{
-						Console.Write(grid[i][j]);
-						if (i == 2 || i == 5)
-							Console.Write("|");
-						else
-							Console.Write(" ");
-					}
-
-					System.Console.WriteLine();
-
-					if (j == 2 || j == 5)
-					{
-						for (int i = 0; i < nb_columns * 2 + 2; i++)
-							System.Console.Write("-");
-
-						System.Console.WriteLine();
-					}
-				}
-			}
-			catch (IndexOutOfRangeException ex)
-			{
-				Console.Error.WriteLine(ex.StackTrace);
-				MessageBox.Show("Error: " + ex.StackTrace, "Error Debug", MessageBoxButtons.OK);
-			}
+			Console.WriteLine("Solution grid:");
+			Console.WriteLine(Game.FormatGrid(game.Solution));
 		}
+		#endregion
 
 		private void mi_forceCopyDebug_Click(object sender, EventArgs e)
 		{
@@ -657,11 +652,39 @@ namespace Genki
 		private void mi_solveSudokuDebug_Click(object sender, EventArgs e)
 		{
 			if (game != null && game.Solution != null)
+			{
 				for (int i = 0; i < Grid.NB_COLUMNS; i++)
+				{
 					for (int j = 0; j < Grid.NB_ROWS; j++)
+					{
+						forceChangeCell = true;
 						SetCellValue(game.Solution[i, j].Value, i, j);
+					}
+				}
+			}
 		}
-		#endregion
+		
+		private void mi_setDefaultGrid_Click(object sender, EventArgs e)
+		{
+			for (int i = 0; i < dvg_grid.ColumnCount; i++)
+			{
+				for (int j = 0; j < dvg_grid.RowCount; j++)
+				{
+					dvg_grid[i, j].Value = "";
+					dvg_grid[i, j].ValueType = typeof(string);
+					dvg_grid[i, j].Style.BackColor = SystemColors.Window;
+					dvg_grid[i, j].ReadOnly = false;
+					dvg_grid[i, j].Style.ForeColor = SystemColors.WindowText;
+
+					game.SudokuGrid[i, j].Value = 0;
+					game.SudokuGrid[i, j].Draft.Clear();
+					game.SudokuGrid[i, j].ReadOnly = false;
+				}
+			}
+
+			game.SetDefaultGrid();
+			OnGridIsComputed();
+		}
 		#endregion
 
 		#region About Events
