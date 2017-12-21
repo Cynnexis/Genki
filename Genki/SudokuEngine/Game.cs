@@ -108,7 +108,12 @@ namespace Genki.SudokuEngine
 		{
 			this.OnGameStateChange = OnGameStateChange != null ? OnGameStateChange : new ActionOnGameState((oldState, newState) => { });
 			State = GameState.PAUSE;
-			SudokuGrid = new Grid(gl); // The constructor init the grid
+			SudokuGrid = new Grid(new GridListener(
+				(x, y, value) =>
+				{
+					gl?.ActionOnGridChange?.Invoke(x, y, value);
+					this.CheckWin();
+				})); // The constructor init the grid
 			Solution = new Grid();
 
 			InitConst();
@@ -265,42 +270,40 @@ namespace Genki.SudokuEngine
 		/// </summary>
 		public void SetDefaultGrid()
 		{
+			// Sudoku from https://www.websudoku.com/images/example-steps.html
 			int[][] problem = new int[][]
-				{
-					new int[] { 0, 0, 0, 0, 0, 0, 6, 8, 0},
-					new int[] { 0, 0, 0, 0, 7, 3, 0, 0, 9},
-					new int[] { 3, 0, 9, 0, 0, 0, 0, 4, 5},
-					new int[] { 4, 9, 0, 0, 0, 0, 0, 0, 0},
-					new int[] { 8, 0, 3, 0, 5, 0, 9, 0, 2},
-					new int[] { 0, 0, 0, 0, 0, 0, 0, 3, 6},
-					new int[] { 9, 6, 0, 0, 0, 0, 3, 0, 8},
-					new int[] { 7, 0, 0, 6, 8, 0, 0, 0, 0},
-					new int[] { 0, 2, 8, 0, 0, 0, 0, 0, 0}
-				};
+			{
+				new int[] { 0, 0, 0, 0, 0, 0, 6, 8, 0},
+				new int[] { 0, 0, 0, 0, 7, 3, 0, 0, 9},
+				new int[] { 3, 0, 9, 0, 0, 0, 0, 4, 5},
+				new int[] { 4, 9, 0, 0, 0, 0, 0, 0, 0},
+				new int[] { 8, 0, 3, 0, 5, 0, 9, 0, 2},
+				new int[] { 0, 0, 0, 0, 0, 0, 0, 3, 6},
+				new int[] { 9, 6, 0, 0, 0, 0, 3, 0, 8},
+				new int[] { 7, 0, 0, 6, 8, 0, 0, 0, 0},
+				new int[] { 0, 2, 8, 0, 0, 0, 0, 0, 0}
+			};
 
 			int[][] solution = new int[][]
 			{
-					new int[] { 1, 7, 2, 5, 4, 9, 6, 8, 3},
-					new int[] { 6, 4, 5, 8, 7, 3, 2, 1, 9},
-					new int[] { 3, 8, 9, 2, 6, 1, 7, 4, 5},
-					new int[] { 4, 9, 6, 3, 2, 1, 8, 5, 1},
-					new int[] { 8, 1, 3, 4, 5, 6, 9, 7, 2},
-					new int[] { 2, 5, 7, 1, 9, 8, 4, 3, 6},
-					new int[] { 9, 6, 4, 7, 1, 5, 3, 2, 8},
-					new int[] { 7, 3, 1, 6, 8, 2, 5, 9, 4},
-					new int[] { 5, 2, 8, 9, 3, 4, 1, 6, 7}
+				new int[] { 1, 7, 2, 5, 4, 9, 6, 8, 3},
+				new int[] { 6, 4, 5, 8, 7, 3, 2, 1, 9},
+				new int[] { 3, 8, 9, 2, 6, 1, 7, 4, 5},
+				new int[] { 4, 9, 6, 3, 2, 7, 8, 5, 1},
+				new int[] { 8, 1, 3, 4, 5, 6, 9, 7, 2},
+				new int[] { 2, 5, 7, 1, 9, 8, 4, 3, 6},
+				new int[] { 9, 6, 4, 7, 1, 5, 3, 2, 8},
+				new int[] { 7, 3, 1, 6, 8, 2, 5, 9, 4},
+				new int[] { 5, 2, 8, 9, 3, 4, 1, 6, 7}
 			};
 
 			for (int i = 0; i < Grid.NB_COLUMNS; i++)
 				for (int j = 0; j < Grid.NB_ROWS; j++)
-					SudokuGrid[i, j].Value = (byte)problem[i][j];
+					SudokuGrid[i, j].Value = (byte)problem[j][i];
 
 			for (int i = 0; i < Grid.NB_COLUMNS; i++)
 				for (int j = 0; j < Grid.NB_ROWS; j++)
-					Solution[i, j].Value = (byte)solution[i][j];
-
-			SudokuGrid.SetValues(SudokuGrid.Transpose());
-			Solution.SetValues(Solution.Transpose());
+					Solution[i, j].Value = (byte)solution[j][i];
 		}
 		#endregion
 
@@ -456,6 +459,7 @@ namespace Genki.SudokuEngine
 
 				if (columnProduct != ColumnProduct || columnSum != ColumnSum || rowProduct != RowProduct || rowSum != RowSum)
 					return false;
+
 				columnProduct = 1;
 				columnSum = 0;
 				rowProduct = 1;
@@ -478,6 +482,9 @@ namespace Genki.SudokuEngine
 
 				if (squareProduct != ColumnProduct || squareSum != ColumnSum)
 					return false;
+
+				squareProduct = 1;
+				squareSum = 0;
 			}
 
 			return true;
@@ -677,6 +684,19 @@ namespace Genki.SudokuEngine
 		public bool IsFull()
 		{
 			return IsFull(this.SudokuGrid);
+		}
+		#endregion
+
+		#region Check Win
+		public bool CheckWin()
+		{
+			if (SudokuGrid != null && (State == GameState.PLAYING || State == GameState.WIN) && IsFull() && CheckGrid())
+			{
+				State = GameState.WIN;
+				return true;
+			}
+
+			return false;
 		}
 		#endregion
 

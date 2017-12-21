@@ -13,6 +13,7 @@ namespace Genki
 {
 	public partial class Frame : Form
 	{
+		#region Variables & Properties
 		public Game game { get; set; }
 
 		private Point activeCell = new Point(-1, -1);
@@ -34,7 +35,9 @@ namespace Genki
 		/// </para>
 		/// </summary>
 		private bool forceChangeCell = false;
+		#endregion
 
+		#region Constructor
 		public Frame()
 		{
 			InitializeComponent();
@@ -89,20 +92,16 @@ namespace Genki
 					switch (newState)
 					{
 						case GameState.PLAYING:
-							b_stopwatchControl.Enabled = true;
-							n_cellValue.Enabled = true;
-							lb_draft.Enabled = true;
-							b_editDraft.Enabled = true;
-							b_addDraft.Enabled = true;
-							b_removeDraft.Enabled = true;
+							StartPlaying();
+							break;
+						case GameState.WIN:
+							game.SudokuStopwatch.Activated = false;
+							StopPlaying();
+							if (MessageBox.Show("Congratulations! You won this Sudoku Grid! Would you like to try again?", "Congratualtions!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+								game.ComputeGrid(OnGridIsComputed);
 							break;
 						default:
-							b_stopwatchControl.Enabled = false;
-							n_cellValue.Enabled = false;
-							lb_draft.Enabled = false;
-							b_editDraft.Enabled = false;
-							b_addDraft.Enabled = false;
-							b_removeDraft.Enabled = false;
+							StopPlaying();
 							break;
 					}
 				}
@@ -110,6 +109,29 @@ namespace Genki
 
 			l_status.Text = "To start playing, click on File > New Game";
 		}
+		#endregion
+
+		#region Configure Game
+		public void StartPlaying()
+		{
+			b_stopwatchControl.Enabled = true;
+			n_cellValue.Enabled = true;
+			lb_draft.Enabled = true;
+			b_editDraft.Enabled = true;
+			b_addDraft.Enabled = true;
+			b_removeDraft.Enabled = true;
+		}
+
+		public void StopPlaying()
+		{
+			b_stopwatchControl.Enabled = false;
+			n_cellValue.Enabled = false;
+			lb_draft.Enabled = false;
+			b_editDraft.Enabled = false;
+			b_addDraft.Enabled = false;
+			b_removeDraft.Enabled = false;
+		}
+		#endregion
 
 		#region Frame Events
 		private void Frame_Shown(object sender, EventArgs e)
@@ -342,7 +364,8 @@ namespace Genki
 				}
 
 				// Finally, at the very end, the program checks if the grid is complete and equal to the solution
-				CheckWin();
+				/*if (game != null)
+					game.CheckWin();*/
 			}
 			// If the value is 0, don't display it in the cell
 			else
@@ -377,17 +400,9 @@ namespace Genki
 				
 				forceChangeCell = false;
 			}
-		}
 
-		private void CheckWin()
-		{
-			if (game != null && game.State == GameState.PLAYING && game.IsFull() && game.CheckGrid())
-			{
-				// TODO: Change the winning code into something more... SPECTACULAR \o/
-				game.State = GameState.WIN;
-				if (MessageBox.Show("Congratulations! You won this Sudoku Grid! Would you like to try again?", "Congratualtions!", MessageBoxButtons.YesNo) == DialogResult.Yes)
-					game.ComputeGrid(OnGridIsComputed);
-			}
+			/*if (game != null)
+				game.CheckWin();*/
 		}
 
 		/// <summary>
@@ -712,7 +727,6 @@ namespace Genki
 			about.ShowDialog(this);
 		}
 		#endregion
-
 		#endregion
 	}
 }

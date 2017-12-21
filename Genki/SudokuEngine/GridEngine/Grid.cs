@@ -79,8 +79,8 @@ namespace Genki.SudokuEngine.GridEngine
 				{
 					this.Cells[i][j] = new Cell(new System.Drawing.Point(i + 1, j + 1), (copy == null ? (byte) 0 : copy[i, j].Value), new CellListener(
 						(value) => { ActionOnGrid.ActionOnGridChange(i, j, value); },
-						(draft) => { })
-					);
+						(draft) => { }
+					));
 				}
 			}
 		}

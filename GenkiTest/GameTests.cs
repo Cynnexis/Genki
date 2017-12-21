@@ -21,6 +21,7 @@ namespace GenkiTest
 		[TestInitialize]
 		public void setUp()
 		{
+			/*
 			// Sudoku from https://www.websudoku.com/images/example-steps.html
 			problem = new int[][]
 			{
@@ -61,6 +62,23 @@ namespace GenkiTest
 			for (int i = 0; i < Grid.NB_COLUMNS; i++)
 				for (int j = 0; j < Grid.NB_ROWS; j++)
 					game.Solution[i, j] = gsolution[i, j] = new Cell(new Point(i + 1, j + 1), (byte)solution[i][j]);
+			*/
+
+			game = new Game();
+			game.SetDefaultGrid();
+			game.State = GameState.PLAYING;
+
+			gproblem = new Grid();
+			gsolution = new Grid();
+
+			for (int i = 0; i < Grid.NB_COLUMNS; i++)
+			{
+				for (int j = 0; j < Grid.NB_ROWS; j++)
+				{
+					gproblem[i, j] = game.SudokuGrid[i, j];
+					gsolution[i, j] = game.Solution[i, j];
+				}
+			}
 		}
 
 		[TestMethod]
@@ -100,15 +118,32 @@ namespace GenkiTest
 		[TestMethod]
 		public void Test_IsFull_Method()
 		{
-			Assert.IsTrue(game.IsFull(gsolution));
-			Assert.IsFalse(game.IsFull(gproblem));
+			Assert.IsTrue(game.IsFull(game.Solution));
+			Assert.IsFalse(game.IsFull(game.SudokuGrid));
 		}
 
 		[TestMethod]
 		public void Test_IsEmpty_Method()
 		{
-			Assert.IsFalse(game.IsEmpty(gsolution));
-			Assert.IsFalse(game.IsEmpty(gproblem));
+			Assert.IsFalse(game.IsEmpty(game.Solution));
+			Assert.IsFalse(game.IsEmpty(game.SudokuGrid));
+		}
+
+		[TestMethod]
+		public void Test_CheckWin_Method()
+		{
+			game.SudokuGrid.SetValues(game.Solution);
+
+			using (StreamWriter file = new StreamWriter("Test_CheckWin.output.txt"))
+			{
+				file.WriteLine("Problem (= Solution):");
+				file.WriteLine(Game.FormatGrid(game.SudokuGrid));
+				file.WriteLine();
+				file.WriteLine("Solution:");
+				file.WriteLine(Game.FormatGrid(game.Solution));
+			}
+
+			Assert.IsTrue(game.CheckWin());
 		}
 
 		[TestMethod]
