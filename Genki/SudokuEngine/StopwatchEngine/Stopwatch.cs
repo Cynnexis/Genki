@@ -9,15 +9,18 @@ using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine.StopwatchEngine
 {
+	/// <summary>
+	/// List of integer counters
+	/// </summary>
+	/// <seealso cref="IntegerCounter"/>
 	[Serializable, DataContract, XmlRoot("Stopwatch")]
 	public class Stopwatch : CounterList<IntegerCounter, int>
 	{
+		#region Variables & Properties
 		[DataMember]
 		private bool activated;
 		[NonSerialized]
 		private Thread watch;
-		[NonSerialized]
-		private ManualResetEvent waitHandler = new ManualResetEvent(true);
 		[DataMember]
 		private bool continueThread;
 
@@ -30,59 +33,84 @@ namespace Genki.SudokuEngine.StopwatchEngine
 		[NonSerialized]
 		private Action onHourChange;
 
+		/// <summary>
+		/// The "second" timer
+		/// </summary>
 		public int Second
 		{
 			get { return this[0].Value; }
 			set { this[0].Value = value; }
 		}
 
+		/// <summary>
+		/// The "minute" timer
+		/// </summary>
 		public int Minute
 		{
 			get { return this[1].Value; }
 			set { this[1].Value = value; }
 		}
 
+		/// <summary>
+		/// The "hour" timer
+		/// </summary>
 		public int Hour
 		{
 			get { return this[2].Value; }
 			set { this[2].Value = value; }
 		}
 
+		/// <summary>
+		/// Listener which is called when the state of the stopwatch is changed
+		/// </summary>
 		public Action OnActiveStateChange
 		{
 			get { return onActiveStateChange; }
 			set { onActiveStateChange = value; }
 		}
+
+		/// <summary>
+		/// Listener which is called when the state of the second timer is changed
+		/// </summary>
 		public Action OnSecondChange
 		{
 			get { return onSecondChange; }
 			set { onSecondChange = value; }
 		}
+
+		/// <summary>
+		/// Listener which is called when the state of the minute timer is changed
+		/// </summary>
 		public Action OnMinuteChange
 		{
 			get { return onMinuteChange; }
 			set { onMinuteChange = value; }
 		}
+
+		/// <summary>
+		/// Listener which is called when the state of the hour timer is changed
+		/// </summary>
 		public Action OnHourChange
 		{
 			get { return onHourChange; }
 			set { onHourChange = value; }
 		}
 
+		/// <summary>
+		/// The state of the stopwatch
+		/// </summary>
 		public bool Activated
 		{
 			get { return activated; }
 			set
 			{
 				activated = value;
-				if (activated)
-					waitHandler?.Set();
-				else
-					waitHandler?.Reset();
 				OnActiveStateChange?.Invoke();
 			}
 		}
+		#endregion
 
+		#region Constructor and Destructor
 		public Stopwatch(Action OnActiveStateChange = null, Action OnSecondChange = null, Action OnMinuteChange = null, Action OnHourChange = null)
 		{
 			this.OnActiveStateChange = (OnActiveStateChange == null ? () => { } : OnActiveStateChange);
@@ -103,14 +131,17 @@ namespace Genki.SudokuEngine.StopwatchEngine
 		{
 			StopThread();
 		}
+		#endregion
 
+		#region Thread Operations
 		private void Watcher()
 		{
 			while (continueThread)
 			{
 				Thread.Sleep(1000);
-				waitHandler.WaitOne();
-				this.increment();
+				//waitHandler.WaitOne();
+				if (activated)
+					this.increment();
 			}
 		}
 
@@ -132,7 +163,13 @@ namespace Genki.SudokuEngine.StopwatchEngine
 			watch = new Thread(Watcher);
 			watch.Start();
 		}
+		#endregion
 
+		#region ToString Override
+		/// <summary>
+		/// Compute a string to return the stopwatch in format "hh:mm:ss"
+		/// </summary>
+		/// <returns>Return the string representation of this instance of Stopwatch</returns>
 		public override string ToString()
 		{
 			string result = "";
@@ -149,6 +186,14 @@ namespace Genki.SudokuEngine.StopwatchEngine
 			return result;
 		}
 
+		/// <summary>
+		/// Convert a 1 or 2-digits number to a 2-characters string. For example,
+		/// convertNumberTo2Char(1) = "01", 
+		/// convertNumberTo2Char(25) = "25" and
+		/// convertNumberTo2Char(999) = "00"
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
 		private string convertNumberTo2Char(int number)
 		{
 			if (number < 0 || number > 99)
@@ -162,5 +207,6 @@ namespace Genki.SudokuEngine.StopwatchEngine
 			result += Convert.ToString(number);
 			return result;
 		}
+		#endregion
 	}
 }

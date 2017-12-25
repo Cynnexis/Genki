@@ -30,6 +30,8 @@ namespace Genki.SudokuEngine
 		private int RowProduct = 0;
 		[NonSerialized]
 		private int RowSum = 0;
+		[NonSerialized]
+		private int MaxSeconds = 25;
 
 		[DataMember]
 		private GameState state;
@@ -186,11 +188,25 @@ namespace Genki.SudokuEngine
 		#endregion
 
 		#region Compute Grid
-		public void ComputeGrid(Action OnGridFound = null)
+		public void ComputeGrid(Action OnGridFound = null, bool useThread = false)
 		{
 			State = GameState.COMPUTING;
 
-			ComputeGridContent(OnGridFound);
+			if (useThread)
+			{
+				try
+				{
+					Thread t_compute = new Thread(() => { ComputeGridContent(OnGridFound); });
+					t_compute.Start();
+				}
+				catch (Exception ex)
+				{
+					Console.Error.WriteLine(ex.StackTrace);
+					ComputeGridContent(OnGridFound);
+				}
+			}
+			else
+				ComputeGridContent(OnGridFound);
 		}
 		private void ComputeGridContent(Action OnGridFound = null)
 		{
@@ -204,7 +220,7 @@ namespace Genki.SudokuEngine
 			} while ((Solution == null || !IsFull(Solution)) && stopwatch.ElapsedMilliseconds <= 10000);
 
 			// Check if the program found a grid, or timeout
-			if (stopwatch.ElapsedMilliseconds > 10000)
+			if (stopwatch.ElapsedMilliseconds > (MaxSeconds * 1000))
 				SetDefaultGrid();
 
 			// If OnGridFound is not null, then call it
@@ -690,7 +706,7 @@ namespace Genki.SudokuEngine
 		#region Check Win
 		public bool CheckWin()
 		{
-			if (SudokuGrid != null && (State == GameState.PLAYING || State == GameState.WIN) && IsFull() && CheckGrid())
+			if (SudokuGrid != null && (State == GameState.PLAYING/* || State == GameState.WIN*/) && IsFull() && CheckGrid())
 			{
 				State = GameState.WIN;
 				return true;

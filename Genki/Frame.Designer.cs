@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frame));
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -51,8 +50,8 @@
 			this.mi_printPhysicalGrid = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_printSolutionGrid = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_forceCopyDebug = new System.Windows.Forms.ToolStripMenuItem();
-			this.mi_magicDebug = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_solveSudokuDebug = new System.Windows.Forms.ToolStripMenuItem();
+			this.mi_setDefaultGrid = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_help = new System.Windows.Forms.ToolStripMenuItem();
 			this.mi_helpMe = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -84,7 +83,6 @@
 			this.b_editDraft = new System.Windows.Forms.Button();
 			this.b_removeDraft = new System.Windows.Forms.Button();
 			this.tp_pronunciation = new System.Windows.Forms.ToolTip(this.components);
-			this.mi_setDefaultGrid = new System.Windows.Forms.ToolStripMenuItem();
 			this.menu.SuspendLayout();
 			this.p_header.SuspendLayout();
 			this.status.SuspendLayout();
@@ -193,7 +191,6 @@
             this.mi_breakNow,
             this.mi_printGrid,
             this.mi_forceCopyDebug,
-            this.mi_magicDebug,
             this.mi_solveSudokuDebug,
             this.mi_setDefaultGrid});
 			this.mi_debug.Name = "mi_debug";
@@ -203,7 +200,7 @@
 			// mi_breakNow
 			// 
 			this.mi_breakNow.Name = "mi_breakNow";
-			this.mi_breakNow.Size = new System.Drawing.Size(280, 26);
+			this.mi_breakNow.Size = new System.Drawing.Size(205, 26);
 			this.mi_breakNow.Text = "Break Now";
 			this.mi_breakNow.Click += new System.EventHandler(this.mi_breakNow_Click);
 			// 
@@ -214,7 +211,7 @@
             this.mi_printPhysicalGrid,
             this.mi_printSolutionGrid});
 			this.mi_printGrid.Name = "mi_printGrid";
-			this.mi_printGrid.Size = new System.Drawing.Size(280, 26);
+			this.mi_printGrid.Size = new System.Drawing.Size(205, 26);
 			this.mi_printGrid.Text = "Print Grid";
 			// 
 			// mi_printVirtualGrid
@@ -241,27 +238,26 @@
 			// mi_forceCopyDebug
 			// 
 			this.mi_forceCopyDebug.Name = "mi_forceCopyDebug";
-			this.mi_forceCopyDebug.Size = new System.Drawing.Size(280, 26);
+			this.mi_forceCopyDebug.Size = new System.Drawing.Size(205, 26);
 			this.mi_forceCopyDebug.Text = "Force DVG <- grid";
 			this.mi_forceCopyDebug.ToolTipText = "Force the copy of the virtual grid into the DataGridView display below";
 			this.mi_forceCopyDebug.Click += new System.EventHandler(this.mi_forceCopyDebug_Click);
 			// 
-			// mi_magicDebug
-			// 
-			this.mi_magicDebug.Name = "mi_magicDebug";
-			this.mi_magicDebug.Size = new System.Drawing.Size(280, 26);
-			this.mi_magicDebug.Text = "The Magic Debugging Button";
-			this.mi_magicDebug.ToolTipText = resources.GetString("mi_magicDebug.ToolTipText");
-			this.mi_magicDebug.Click += new System.EventHandler(this.mi_magicDebug_Click);
-			// 
 			// mi_solveSudokuDebug
 			// 
 			this.mi_solveSudokuDebug.Name = "mi_solveSudokuDebug";
-			this.mi_solveSudokuDebug.Size = new System.Drawing.Size(280, 26);
+			this.mi_solveSudokuDebug.Size = new System.Drawing.Size(205, 26);
 			this.mi_solveSudokuDebug.Text = "Solve It";
 			this.mi_solveSudokuDebug.ToolTipText = "Solve the soduku for you.\r\nWhy would you waste your time when a computer can do i" +
     "t?";
 			this.mi_solveSudokuDebug.Click += new System.EventHandler(this.mi_solveSudokuDebug_Click);
+			// 
+			// mi_setDefaultGrid
+			// 
+			this.mi_setDefaultGrid.Name = "mi_setDefaultGrid";
+			this.mi_setDefaultGrid.Size = new System.Drawing.Size(205, 26);
+			this.mi_setDefaultGrid.Text = "Set Default Grid";
+			this.mi_setDefaultGrid.Click += new System.EventHandler(this.mi_setDefaultGrid_Click);
 			// 
 			// mi_help
 			// 
@@ -387,6 +383,7 @@
 			this.dvg_grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
 			this.dvg_grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.dvg_grid.BackgroundColor = System.Drawing.Color.IndianRed;
+			this.dvg_grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
 			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
 			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -632,13 +629,6 @@
 			this.tp_pronunciation.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
 			this.tp_pronunciation.ToolTipTitle = "Pronunciation";
 			// 
-			// mi_setDefaultGrid
-			// 
-			this.mi_setDefaultGrid.Name = "mi_setDefaultGrid";
-			this.mi_setDefaultGrid.Size = new System.Drawing.Size(280, 26);
-			this.mi_setDefaultGrid.Text = "Set Default Grid";
-			this.mi_setDefaultGrid.Click += new System.EventHandler(this.mi_setDefaultGrid_Click);
-			// 
 			// Frame
 			// 
 			this.AccessibleName = "Main Window";
@@ -722,7 +712,6 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 		private System.Windows.Forms.ToolTip tp_pronunciation;
-		private System.Windows.Forms.ToolStripMenuItem mi_magicDebug;
 		private System.Windows.Forms.ToolStripMenuItem mi_forceCopyDebug;
 		private System.Windows.Forms.ToolStripMenuItem mi_solveSudokuDebug;
 		private System.Windows.Forms.ToolStripProgressBar progressBar;

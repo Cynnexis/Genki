@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Genki.SudokuEngine.Exceptions
 {
+	/// <summary>
+	/// Exception called when the dimension of the grid are not equal
+	/// </summary>
 	public class DimensionsNotEqualException : Exception
 	{
 		public DimensionsNotEqualException() : base() { }

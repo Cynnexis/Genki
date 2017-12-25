@@ -8,9 +8,14 @@ using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine.StopwatchEngine
 {
+	/// <summary>
+	/// Counter of element <paramref name="T"/>
+	/// </summary>
+	/// <typeparam name="T">The type of variable to count</typeparam>
 	[Serializable, DataContract, XmlRoot("AbstractCounter")]
 	public abstract class AbstractCounter<T> : CounterInterface<T>
 	{
+		#region Variables & Properties
 		[DataMember]
 		private T _value;
 		[DataMember]
@@ -71,7 +76,9 @@ namespace Genki.SudokuEngine.StopwatchEngine
 			get { return actionOnCounter; }
 			set { actionOnCounter = value; }
 		}
+		#endregion
 
+		#region Constructor
 		public AbstractCounter(T defaultValue, T min, T max, T step, CounterListener<T> cl = null)
 		{
 			this.Value = defaultValue;
@@ -83,7 +90,9 @@ namespace Genki.SudokuEngine.StopwatchEngine
 			else
 				this.ActionOnCounter = new CounterListener<T>();
 		}
+		#endregion
 
+		#region Counter Operations
 		public bool increment()
 		{
 			bool overflow = false;
@@ -118,14 +127,19 @@ namespace Genki.SudokuEngine.StopwatchEngine
 		{
 			Value = Min;
 		}
-		
+		#endregion
+
+		#region Operations over T
 		public abstract T plus(T t1, T t2);
 		public abstract T minus(T t1, T t2);
 		public abstract int compare(T t1, T t2);
+		#endregion
 
+		#region Override
 		public override string ToString()
 		{
 			return Value.ToString();
 		}
+		#endregion
 	}
 }

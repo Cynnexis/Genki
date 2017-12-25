@@ -8,13 +8,21 @@ using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine.StopwatchEngine
 {
+	/// <summary>
+	/// Listeners for a counter
+	/// </summary>
+	/// <typeparam name="T">The type of data the counter has</typeparam>
+	/// <seealso cref="AbstractCounter{T}"/>
 	public class CounterListener<T>
 	{
+		#region Delegates Declaration
 		public delegate void OnValueChanged(T value);
 		public delegate void OnMinChanged(T min);
 		public delegate void OnMaxChanged(T max);
 		public delegate void OnStepChanged(T step);
+		#endregion
 
+		#region Variables & Properties
 		[NonSerialized]
 		public OnValueChanged actionOnValueChanged;
 		[NonSerialized]
@@ -44,7 +52,9 @@ namespace Genki.SudokuEngine.StopwatchEngine
 			get { return actionOnStepChanged; }
 			set { actionOnStepChanged = value; }
 		}
+		#endregion
 
+		#region Constructor
 		public CounterListener(OnValueChanged onValueChanged = null, OnMinChanged onMinChanged = null, OnMaxChanged onMaxChanged = null, OnStepChanged onStepChanged = null)
 		{
 			this.ActionOnValueChanged = onValueChanged == null ? new OnValueChanged((value) => { }) : onValueChanged;
@@ -52,5 +62,6 @@ namespace Genki.SudokuEngine.StopwatchEngine
 			this.ActionOnMaxChanged = onMaxChanged == null ? new OnMaxChanged((max) => { }) : onMaxChanged;
 			this.ActionOnStepChanged = onStepChanged == null ? new OnStepChanged((step) => { }) : onStepChanged;
 		}
+		#endregion
 	}
 }

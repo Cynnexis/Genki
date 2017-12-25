@@ -8,9 +8,13 @@ using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine.StopwatchEngine
 {
+	/// <summary>
+	/// Counter of integer, inherted from AbstractCounter
+	/// </summary>
 	[Serializable, DataContract, XmlRoot("IntegerCounter")]
 	public class IntegerCounter : AbstractCounter<int>
 	{
+		#region Constructors
 		public IntegerCounter(int defaultValue, int min, int max, int step, CounterListener<int> cl = null) : base(defaultValue, min, max, step, cl)
 		{ }
 		public IntegerCounter(int defaultValue, int min, int max, int step, Action action = null) : base(defaultValue, min, max, step)
@@ -21,7 +25,9 @@ namespace Genki.SudokuEngine.StopwatchEngine
 				this.ActionOnCounter = cl;
 			}
 		}
+		#endregion
 
+		#region Integer Operations
 		public override int compare(int t1, int t2)
 		{
 			if (t1 < t2)
@@ -41,5 +47,6 @@ namespace Genki.SudokuEngine.StopwatchEngine
 		{
 			return t1 + t2;
 		}
+		#endregion
 	}
 }

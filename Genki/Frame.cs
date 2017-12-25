@@ -63,25 +63,7 @@ namespace Genki
 				}
 			}
 
-			game = new Game(new GridListener(
-				(x, y, value) =>
-				{
-					try
-					{
-						if (x >= 0 && x < Grid.NB_COLUMNS && y >= 0 && y < Grid.NB_ROWS)
-						{
-							if (value != 0)
-								dvg_grid[x, y].Value = value;
-							else
-								dvg_grid[x, y].Value = "";
-							dvg_grid[x, y].ValueType = typeof(string);
-						}
-					}
-					catch (Exception e)
-					{
-					}
-				}
-			), new Action(
+			game = new Game(new GridListener((x, y, value) => { }), new Action(
 				() =>
 				{
 					SyncStopwatch();
@@ -95,10 +77,9 @@ namespace Genki
 							StartPlaying();
 							break;
 						case GameState.WIN:
-							game.SudokuStopwatch.Activated = false;
 							StopPlaying();
-							if (MessageBox.Show("Congratulations! You won this Sudoku Grid! Would you like to try again?", "Congratualtions!", MessageBoxButtons.YesNo) == DialogResult.Yes)
-								game.ComputeGrid(OnGridIsComputed);
+							MessageBox.Show("Congratulations! You won this Sudoku Grid!", "Congratualtions!", MessageBoxButtons.OK);
+							System.Threading.Timer timer = new System.Threading.Timer((state) => { CopyGridIntoDVG(); }, null, 100, System.Threading.Timeout.Infinite);
 							break;
 						default:
 							StopPlaying();
@@ -112,8 +93,13 @@ namespace Genki
 		#endregion
 
 		#region Configure Game
+		/// <summary>
+		/// Enable some components when the game starts or restarts
+		/// </summary>
 		public void StartPlaying()
 		{
+			if (game != null && game.SudokuStopwatch != null)
+				game.SudokuStopwatch.Activated = true;
 			b_stopwatchControl.Enabled = true;
 			n_cellValue.Enabled = true;
 			lb_draft.Enabled = true;
@@ -122,14 +108,29 @@ namespace Genki
 			b_removeDraft.Enabled = true;
 		}
 
+		/// <summary>
+		/// Disable some components when the game stops or pauses
+		/// </summary>
 		public void StopPlaying()
 		{
+			if (game != null && game.SudokuStopwatch != null)
+				game.SudokuStopwatch.Activated = false;
 			b_stopwatchControl.Enabled = false;
 			n_cellValue.Enabled = false;
 			lb_draft.Enabled = false;
 			b_editDraft.Enabled = false;
 			b_addDraft.Enabled = false;
 			b_removeDraft.Enabled = false;
+		}
+
+		/// <summary>
+		/// Reset the stopwatch, the grids and start playing again
+		/// </summary>
+		public void RestartGame()
+		{
+			game.SudokuStopwatch.reset();
+			ResetDVG();
+			StartPlaying();
 		}
 		#endregion
 
@@ -156,36 +157,42 @@ namespace Genki
 		/// <seealso cref="Game.ComputeGrid(Action)"/>
 		private void OnGridIsComputed()
 		{
-			l_status.Text = "Grid generated. Have fun!";
-#if DEBUG
-			mi_printVirtualGrid_Click(null, null);
-#endif
-			CopyGridIntoDVG();
-#if DEBUG
-			mi_printPhysicalGrid_Click(null, null);
-#endif
-			for (int i = 0; i < dvg_grid.ColumnCount; i++)
-			{
-				for (int j = 0; j < dvg_grid.RowCount; j++)
+			/* The Frame instance must used BeginInvoke to execute the following code because the method OnGridIsComputed might be
+			 * call from another thread that the UI thread (main thread), and changing components is forbidden from another thread.
+			 * Therefore, the code must be execute from the BeginInvoke method.
+			 */
+			BeginInvoke((MethodInvoker) delegate() {
+				l_status.Text = "Grid generated. Have fun!";
+
+	#if DEBUG
+				mi_printVirtualGrid_Click(null, null);
+	#endif
+				CopyGridIntoDVG();
+	#if DEBUG
+				mi_printPhysicalGrid_Click(null, null);
+	#endif
+				for (int i = 0; i < dvg_grid.ColumnCount; i++)
 				{
-					dvg_grid[i, j].Style.BackColor = SystemColors.Window;
-					if (!Convert.ToString(dvg_grid[i, j].Value).Equals(""))
+					for (int j = 0; j < dvg_grid.RowCount; j++)
 					{
-						dvg_grid[i, j].ReadOnly = game.SudokuGrid[i, j].ReadOnly = true;
-						dvg_grid[i, j].Style.ForeColor = SystemColors.ControlDarkDark;
-					}
-					else
-					{
-						dvg_grid[i, j].ReadOnly = game.SudokuGrid[i, j].ReadOnly = false;
-						dvg_grid[i, j].Style.ForeColor = SystemColors.WindowText;
+						dvg_grid[i, j].Style.BackColor = SystemColors.Window;
+						if (!Convert.ToString(dvg_grid[i, j].Value).Equals(""))
+						{
+							dvg_grid[i, j].ReadOnly = game.SudokuGrid[i, j].ReadOnly = true;
+							dvg_grid[i, j].Style.ForeColor = SystemColors.ControlDarkDark;
+						}
+						else
+						{
+							dvg_grid[i, j].ReadOnly = game.SudokuGrid[i, j].ReadOnly = false;
+							dvg_grid[i, j].Style.ForeColor = SystemColors.WindowText;
+						}
 					}
 				}
-			}
 
-			progressBar.Style = ProgressBarStyle.Blocks;
-			game.State = GameState.PLAYING;
-			//CopyGridIntoDVG();
-			//dvg_grid.Invalidate();
+				progressBar.Style = ProgressBarStyle.Blocks;
+
+				game.State = GameState.PLAYING;
+			});
 		}
 		#endregion
 
@@ -274,10 +281,19 @@ namespace Genki
 							value = game.SudokuGrid[e.ColumnIndex, e.RowIndex].Value;
 					}
 				}
-				// Otherwise, the value is 0
+				// Otherwise, try to convert it anyway. If the conversion fail, the value is 0
 				else
-					value = 0;
-
+				{
+					try
+					{
+						value = Convert.ToByte(o);
+					}
+					catch (Exception ex)
+					{
+						value = 0;
+					}
+				}
+				
 				// See the doc comment of forceChangeCell for more details about this boolean. It gives a 'administrator' action for this method.
 				if (forceChangeCell)
 					SetCellValue(value, e.ColumnIndex, e.RowIndex);
@@ -295,15 +311,15 @@ namespace Genki
 		private void dvg_grid_CellEnter(object sender, DataGridViewCellEventArgs e)
 		{
 			activeCell = new Point(e.ColumnIndex, e.RowIndex);
-			/*
-#if DEBUG
-			System.Console.WriteLine("DEBUG> Active Cell[" + activeCell.X + ", " + activeCell.Y + "]");
-#endif
-			*/
 			gb_cellOption.Visible = true;
 
 			if (activeCell.X != -1 && activeCell.Y != -1)
 			{
+				// Prevent the dvg from scolling down when a cell in the last row is selected
+				if (activeCell.Y == Grid.NB_ROWS - 1)
+					dvg_grid.FirstDisplayedScrollingRowIndex = 0;
+
+				// Refresh the components on the right side of the frame
 				n_cellValue.Value = game.SudokuGrid[activeCell.X, activeCell.Y].Value;
 
 				ObservableCollection<byte> list = game.SudokuGrid[activeCell.X, activeCell.Y].Draft;
@@ -317,6 +333,7 @@ namespace Genki
 		{
 			if (dvg_grid.SelectedCells == null || dvg_grid.SelectedCells.Count == 0)
 			{
+				// Deactivate the attribute activeCell and reset the panel on the right side of the frame
 				activeCell = new Point(-1, -1);
 				gb_cellOption.Visible = false;
 			}
@@ -324,6 +341,7 @@ namespace Genki
 		
 		private void dvg_grid_SizeChanged(object sender, EventArgs e)
 		{
+			// For each rows in the grid, resize them to fit the available space
 			foreach (DataGridViewRow row in dvg_grid.Rows)
 				row.Height = dvg_grid.Height / dvg_grid.Rows.Count;
 		}
@@ -362,10 +380,6 @@ namespace Genki
 				{
 					Console.Error.WriteLine(ex.StackTrace);
 				}
-
-				// Finally, at the very end, the program checks if the grid is complete and equal to the solution
-				/*if (game != null)
-					game.CheckWin();*/
 			}
 			// If the value is 0, don't display it in the cell
 			else
@@ -382,27 +396,30 @@ namespace Genki
 		/// <param name="y"></param>
 		private void SetCellValue(byte value, int x, int y)
 		{
+			// Check if the indexes are valid
 			if (x < 0 || x >= Grid.NB_COLUMNS || y < 0 || y >= Grid.NB_ROWS)
 				return;
 
+			// Check if the value is valid
 			if (!(value >= 0 && value <= 9))
 				value = 0;
 			
 			if (game != null && (game.State == GameState.PLAYING || forceChangeCell))
 			{
+				// The virtual grid get the new value
 				game.SudokuGrid[x, y].Value = value;
 				
+				// The dvg grid get the new value. If the value is 0, it gets an empty string
 				if (value != 0)
 					dvg_grid[x, y].Value = value.ToString();
 				else
 					dvg_grid[x, y].Value = "";
 				dvg_grid[x, y].ValueType = typeof(string);
 				
+
+				// Reset the forceChangeCell attribute
 				forceChangeCell = false;
 			}
-
-			/*if (game != null)
-				game.CheckWin();*/
 		}
 
 		/// <summary>
@@ -422,28 +439,53 @@ namespace Genki
 				}
 			}
 		}
+
+		/// <summary>
+		/// Reset the DVG (physical) grid
+		/// </summary>
+		public void ResetDVG()
+		{
+			for (int i = 0; i < dvg_grid.ColumnCount; i++)
+			{
+				for (int j = 0; j < dvg_grid.RowCount; j++)
+				{
+					dvg_grid[i, j].Value = "";
+					dvg_grid[i, j].ValueType = typeof(string);
+					dvg_grid[i, j].Style.BackColor = SystemColors.Window;
+					dvg_grid[i, j].ReadOnly = false;
+					dvg_grid[i, j].Style.ForeColor = SystemColors.WindowText;
+
+					game.SudokuGrid[i, j].Value = 0;
+					game.SudokuGrid[i, j].Draft.Clear();
+					game.SudokuGrid[i, j].ReadOnly = false;
+				}
+			}
+		}
 		#endregion
 
 		#region Cell Value Event
 		private void n_cellValue_ValueChanged(object sender, EventArgs e)
 		{
 			// If X or Y is -1, then activeCell is not usable, and the program assumes there is no active cell in the DVG.
-			if (activeCell.X == -1 || activeCell.Y == -1)
+			if (activeCell.X != -1 && activeCell.Y != -1)
 			{
 				try
 				{
 					byte value = Convert.ToByte(n_cellValue.Value);
+					// If the value is not valid, empty the cell
 					if (value < 0 || value > 9)
 					{
 						n_cellValue.Value = 0;
 						return;
 					}
 
+					// Otherwise, try to set it
 					SetCellValueWithCheck(value, activeCell.X, activeCell.Y);
 				}
 				catch (OverflowException ex)
 				{
 					System.Console.Error.WriteLine(ex.StackTrace);
+					// If something went wrong, the cell obtain the value in the virtual grid
 					n_cellValue.Value = game.SudokuGrid[activeCell.X, activeCell.Y].Value;
 				}
 			}
@@ -453,6 +495,7 @@ namespace Genki
 		#region ListBox Draft Events
 		private void lb_draft_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			// If a value is selected in the listbox, the buttons "Edit" and "Remove" are enabled
 			b_editDraft.Enabled = (lb_draft.SelectedIndex != -1);
 			b_removeDraft.Enabled = (lb_draft.SelectedIndex != -1);
 		}
@@ -465,13 +508,16 @@ namespace Genki
 			{
 				try
 				{
+					// Ask the user for the new draft
 					string answer = Microsoft.VisualBasic.Interaction.InputBox("Enter the new value:", "Edit Draft: " + lb_draft.SelectedItem.ToString(), game.SudokuGrid[activeCell.X, activeCell.Y].Value.ToString());
 					if (answer != null && answer.Length > 0)
 					{
+						// Get the number
 						char result = answer[0];
 						if (char.IsNumber(result) && result >= '0' && result <= '9')
 						{
 							byte value = Convert.ToByte(result - '0');
+							// Edit the value in the virtual grid AND the listbox
 							game.SudokuGrid[activeCell.X, activeCell.Y].Draft[lb_draft.SelectedIndex] = value;
 							lb_draft.Items[lb_draft.SelectedIndex] = value;
 						}
@@ -489,13 +535,16 @@ namespace Genki
 		{
 			if (activeCell.X != -1 && activeCell.Y != -1 && game.State == GameState.PLAYING)
 			{
+				// Ask the user for the new draft
 				string answer = Microsoft.VisualBasic.Interaction.InputBox("Enter a value:", "Add Draft", "0");
 				if (answer != null && answer.Length > 0)
 				{
+					// Get the number
 					char result = answer[0];
 					if (char.IsNumber(result) && result >= '0' && result <= '9')
 					{
 						byte value = Convert.ToByte(result - '0');
+						// Add it to the virtual grid AND the listbox
 						game.SudokuGrid[activeCell.X, activeCell.Y].Draft.Add(value);
 						lb_draft.Items.Add(value);
 					}
@@ -509,8 +558,10 @@ namespace Genki
 		{
 			if (lb_draft.SelectedIndex != -1 && activeCell.X != -1 && activeCell.Y != -1 && game.State == GameState.PLAYING)
 			{
+				// Ask the user for removing the draft
 				if (MessageBox.Show("Are you sure you want to delete the draft " + lb_draft.SelectedItem.ToString() + " of the cell (" + (activeCell.X + 1) + " ; " + (activeCell.Y + 1) + ")?", "Delete draft " + lb_draft.SelectedItem.ToString(), MessageBoxButtons.YesNo) == DialogResult.Yes)
 				{
+					// Remove the draft from the virtual grid AND the listview
 					game.SudokuGrid[activeCell.X, activeCell.Y].Draft.RemoveAt(lb_draft.SelectedIndex);
 					lb_draft.Items.RemoveAt(lb_draft.SelectedIndex);
 				}
@@ -524,25 +575,10 @@ namespace Genki
 		{
 			progressBar.Style = ProgressBarStyle.Marquee;
 			l_status.Text = "Computing...";
+			
+			RestartGame();
 
-			// Reseting the dvg_grid and sudokugrid object
-			for (int i = 0; i < dvg_grid.ColumnCount; i++)
-			{
-				for (int j = 0; j < dvg_grid.RowCount; j++)
-				{
-					dvg_grid[i, j].Value = "";
-					dvg_grid[i, j].ValueType = typeof(string);
-					dvg_grid[i, j].Style.BackColor = SystemColors.Window;
-					dvg_grid[i, j].ReadOnly = false;
-					dvg_grid[i, j].Style.ForeColor = SystemColors.WindowText;
-
-					game.SudokuGrid[i, j].Value = 0;
-					game.SudokuGrid[i, j].Draft.Clear();
-					game.SudokuGrid[i, j].ReadOnly = false;
-				}
-			}
-
-			game.ComputeGrid(OnGridIsComputed);
+			game.ComputeGrid(OnGridIsComputed, true);
 		}
 
 		private void mi_save_Click(object sender, EventArgs e)
@@ -586,10 +622,6 @@ namespace Genki
 		{
 			Application.Exit();
 		}
-		#endregion
-
-		#region Edit Events
-
 		#endregion
 
 		#region Window Events
@@ -650,27 +682,13 @@ namespace Genki
 			CopyGridIntoDVG();
 		}
 
-		private void mi_magicDebug_Click(object sender, EventArgs e)
-		{
-			if (game != null)
-			{
-				if (MessageBox.Show("Is current grid valid?\n" + (game.SolveGrid() != null) + "\nWould you like to enter into the code by using the Great Debugger?", "The Magic Debugging Dialogbox", MessageBoxButtons.YesNo) == DialogResult.Yes)
-				{
-					Debugger.Break();
-					game.SolveGrid();
-				}
-			}
-			else
-				MessageBox.Show("Too bad :(\nThe `game` object is not initialized yet. Are you faster than the computer?", "The Magic Debugging Dialogbox", MessageBoxButtons.OK);
-		}
-
 		private void mi_solveSudokuDebug_Click(object sender, EventArgs e)
 		{
 			if (game != null && game.Solution != null)
 			{
 				for (int i = 0; i < Grid.NB_COLUMNS; i++)
 				{
-					for (int j = 0; j < Grid.NB_ROWS; j++)
+					for (int j = 0; j < Grid.NB_ROWS && game.SudokuGrid.GetEmptyCells().Count > 1; j++)
 					{
 						forceChangeCell = true;
 						SetCellValue(game.Solution[i, j].Value, i, j);
@@ -681,7 +699,7 @@ namespace Genki
 		
 		private void mi_setDefaultGrid_Click(object sender, EventArgs e)
 		{
-			for (int i = 0; i < dvg_grid.ColumnCount; i++)
+			/*for (int i = 0; i < dvg_grid.ColumnCount; i++)
 			{
 				for (int j = 0; j < dvg_grid.RowCount; j++)
 				{
@@ -695,7 +713,8 @@ namespace Genki
 					game.SudokuGrid[i, j].Draft.Clear();
 					game.SudokuGrid[i, j].ReadOnly = false;
 				}
-			}
+			}*/
+			RestartGame();
 
 			game.SetDefaultGrid();
 			OnGridIsComputed();

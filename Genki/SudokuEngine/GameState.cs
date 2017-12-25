@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine
 {
+	/// <summary>
+	/// State of the game
+	/// </summary>
 	[Serializable]
 	public enum GameState
 	{

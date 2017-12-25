@@ -13,6 +13,7 @@ namespace Genki.SudokuEngine.CellEngine
 	[Serializable, DataContract, XmlRoot("Cell")]
 	public class Cell
 	{
+		#region Variables & Properties
 		/// <summary>
 		/// The coordinates start from (1, 1)
 		/// </summary>
@@ -27,6 +28,9 @@ namespace Genki.SudokuEngine.CellEngine
 		[NonSerialized]
 		private CellListener _cellListeners = new CellListener();
 
+		/// <summary>
+		/// The coordinates start from (1, 1)
+		/// </summary>
 		public Point Coordinates
 		{
 			get { return _coordinates; }
@@ -39,6 +43,9 @@ namespace Genki.SudokuEngine.CellEngine
 			}
 		}
 
+		/// <summary>
+		/// The value of the cell. It must be between 0 and 9. Once the value is changed, it calls the OnValueChanged Listener.
+		/// </summary>
 		public byte Value
 		{
 			get { return _value; }
@@ -48,38 +55,48 @@ namespace Genki.SudokuEngine.CellEngine
 					_value = value;
 				else
 					_value = 0;
-				CellListeners?.onValueChange(Value);
+				CellListeners?.onValueChanged(Value);
 			}
 		}
 
+		/// <summary>
+		/// The draft list. Once it changed, a listener is called
+		/// </summary>
 		public ObservableCollection<byte> Draft
 		{
 			get { return _draft; }
 			set
 			{
 				_draft = value;
-				CellListeners?.onDraftChange(Draft);
+				CellListeners?.onDraftChanged(Draft);
 			}
 		}
 
+		/// <summary>
+		/// ReadOnly. It has no influence over the Setters of the cell, this is only an information which must be
+		/// saved during the serialization. Once it changed, a listener is called
+		/// </summary>
 		public bool ReadOnly
 		{
 			get { return readOnly; }
 			set
 			{
 				readOnly = value;
-				CellListeners?.onReadOnlyChange(ReadOnly);
+				CellListeners?.onReadOnlyChanged(ReadOnly);
 			}
 		}
 
+		/// <summary>
+		/// The listeners
+		/// </summary>
 		public CellListener CellListeners
 		{
 			get { return _cellListeners; }
 			set { _cellListeners = value; }
 		}
-		
+		#endregion
 
-
+		#region Constructor
 		public Cell(Point coordinates, byte value = 0, CellListener cellListeners = null, bool readOnly = false, ObservableCollection<byte> draft = null)
 		{
 			this.Coordinates = coordinates;
@@ -87,13 +104,15 @@ namespace Genki.SudokuEngine.CellEngine
 			if (draft != null)
 			{
 				this.Draft = draft;
-				this.Draft.CollectionChanged += (sender, e) => { CellListeners?.onDraftChange(Draft); };
+				this.Draft.CollectionChanged += (sender, e) => { CellListeners?.onDraftChanged(Draft); };
 			}
 			this.ReadOnly = readOnly;
 			if (cellListeners != null)
 				this.CellListeners = cellListeners;
 		}
+		#endregion
 
+		#region Overrides
 		public override string ToString()
 		{
 			// Coordinates
@@ -136,5 +155,6 @@ namespace Genki.SudokuEngine.CellEngine
 			Cell c = (Cell) obj;
 			return this.Value == c.Value;
 		}
+		#endregion
 	}
 }

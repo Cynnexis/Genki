@@ -8,6 +8,10 @@ using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine.StopwatchEngine
 {
+	/// <summary>
+	/// Interface to implement the basic operations for <paramref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T">The element</typeparam>
 	public interface CounterInterface<T>
 	{
 		/// <summary>

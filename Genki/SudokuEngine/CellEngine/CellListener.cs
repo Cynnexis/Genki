@@ -9,21 +9,27 @@ using System.Xml.Serialization;
 
 namespace Genki.SudokuEngine.CellEngine
 {
-	public delegate void OnValueChange(byte value);
-	public delegate void OnDraftChange(ObservableCollection<byte> draft);
-	public delegate void OnReadOnlyChange(bool readOnly);
-	
+	#region Delegates Declaration
+	public delegate void OnValueChanged(byte value);
+	public delegate void OnDraftChanged(ObservableCollection<byte> draft);
+	public delegate void OnReadOnlyChanged(bool readOnly);
+	#endregion
+
 	public class CellListener
 	{
-		public OnValueChange onValueChange { get; set; }
-		public OnDraftChange onDraftChange { get; set; }
-		public OnReadOnlyChange onReadOnlyChange { get; set; }
+		#region Properties
+		public OnValueChanged onValueChanged { get; set; }
+		public OnDraftChanged onDraftChanged { get; set; }
+		public OnReadOnlyChanged onReadOnlyChanged { get; set; }
+		#endregion
 
-		public CellListener(OnValueChange onValueChange = null, OnDraftChange onDraftChange = null, OnReadOnlyChange onReadOnlyChange = null)
+		#region Constructor
+		public CellListener(OnValueChanged onValueChanged = null, OnDraftChanged onDraftChanged = null, OnReadOnlyChanged onReadOnlyChanged = null)
 		{
-			this.onValueChange = onValueChange != null ? onValueChange : new OnValueChange((value) => { });
-			this.onDraftChange = onDraftChange != null ? onDraftChange : new OnDraftChange((draft) => { });
-			this.onReadOnlyChange = onReadOnlyChange != null ? onReadOnlyChange : new OnReadOnlyChange((readOnly) => { });
+			this.onValueChanged = onValueChanged != null ? onValueChanged : new OnValueChanged((value) => { });
+			this.onDraftChanged = onDraftChanged != null ? onDraftChanged : new OnDraftChanged((draft) => { });
+			this.onReadOnlyChanged = onReadOnlyChanged != null ? onReadOnlyChanged : new OnReadOnlyChanged((readOnly) => { });
 		}
+		#endregion
 	}
 }

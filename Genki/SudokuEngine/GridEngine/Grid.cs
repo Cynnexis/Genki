@@ -1,6 +1,7 @@
 ﻿using Genki.SudokuEngine.CellEngine;
 using Genki.SudokuEngine.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
@@ -9,15 +10,24 @@ namespace Genki.SudokuEngine.GridEngine
 	[Serializable, DataContract, XmlRoot("Grid")]
 	public class Grid
 	{
+		#region Variables & Properties
+		// Constantes:
 		public const uint NB_ROWS = 9;
 		public const uint NB_COLUMNS = 9;
 		
+		/// <summary>
+		/// Array of cells
+		/// </summary>
 		[DataMember]
 		private Cell[][] _cells = null;
+		
 		
 		[NonSerialized]
 		private GridListener actionOnGrid = null;
 
+		/// <summary>
+		/// Listener
+		/// </summary>
 		public GridListener ActionOnGrid
 		{
 			get { return actionOnGrid; }
@@ -46,6 +56,7 @@ namespace Genki.SudokuEngine.GridEngine
 				ActionOnGrid.ActionOnGridChange(i, j, value.Value);
 			}
 		}
+		// Indexer
 		public Cell[] this[int i]
 		{
 			set
@@ -61,8 +72,10 @@ namespace Genki.SudokuEngine.GridEngine
 				return Cells[i];
 			}
 		}
+		#endregion
 
 
+		#region Constructor & Initialization
 		public Grid(GridListener gridListener = null, Grid copy = null)
 		{
 			if (gridListener != null)
@@ -113,7 +126,14 @@ namespace Genki.SudokuEngine.GridEngine
 				}
 			}
 		}
+		#endregion
 
+		#region Transpose
+		/// <summary>
+		/// Transpose the grid <paramref name="g"/> such that the number if columns is equal to the number of rows
+		/// </summary>
+		/// <param name="g">The grid to transpose</param>
+		/// <returns>The transposed grid</returns>
 		public Grid Transpose(Grid g)
 		{
 			if (NB_COLUMNS != NB_ROWS)
@@ -127,11 +147,20 @@ namespace Genki.SudokuEngine.GridEngine
 
 			return g;
 		}
+		/// <summary>
+		/// Transpose the current instance of grid such that the number if columns is equal to the number of rows
+		/// </summary>
+		/// <returns>The transposed grid</returns>
 		public Grid Transpose()
 		{
 			return Transpose(this);
 		}
+		#endregion
 
+		/// <summary>
+		/// Copy all the cells value from <paramref name="newGrid"/> to the cells of the current instance of the grid
+		/// </summary>
+		/// <param name="newGrid">The grid to copy</param>
 		public void SetValues(Grid newGrid)
 		{
 			if (newGrid != null)
@@ -141,6 +170,28 @@ namespace Genki.SudokuEngine.GridEngine
 						if (newGrid[i, j] != null)
 							this[i, j].Value = newGrid[i, j].Value;
 			}
+		}
+
+		/// <summary>
+		/// Search every non-null cell in the grid which contains '0' as value, and store them in a list
+		/// </summary>
+		/// <returns>The list of non-null cell containing 0</returns>
+		public List<Cell> GetEmptyCells()
+		{
+			List<Cell> list = new List<Cell>();
+
+			for (int i = 0; i < NB_ROWS; i++)
+			{
+				for (int j = 0; j < NB_COLUMNS; j++)
+				{
+					if (this[i, j] != null && this[i, j].Value == 0)
+					{
+						list.Add(this[i, j]);
+					}
+				}
+			}
+
+			return list;
 		}
 
 		public override bool Equals(object obj)
