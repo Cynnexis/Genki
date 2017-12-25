@@ -383,7 +383,7 @@ namespace Genki
 			}
 			// If the value is 0, don't display it in the cell
 			else
-				dvg_grid[x, y].Value = "";
+				SetCellValue(value, x, y);
 		}
 
 		/// <summary>
