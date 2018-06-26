@@ -4,6 +4,7 @@ Genki est une application permettant de générer une grille de Sudoku réalisab
 
 Ce programme fut réalisé avec Visual Studio 2015.
 
+
 ## Comment utiliser Genki ? ##
 
 Pour utiliser Genki, il suffit de lancer l'application. Ensuite, la génération d'une grille se fait en cliquant sur le menu "_Genki_" > "_New game_" ou en effécutant la combinaison de touches "_Ctrl_ + _N_".
